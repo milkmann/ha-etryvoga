@@ -60,29 +60,39 @@ All threat binary sensors use the `safety` device class, displaying **Safe** (`o
 | `sensor.<id>_tactical_summary` | **Tactical Summary** | Text | Structured human-readable threat summary suitable for dashboards or Text-to-Speech (TTS). |
 | `sensor.<id>_alert_duration` | **Alert Duration** | Number (minutes) | Elapsed duration of the current active alert. |
 | `sensor.<id>_active_threats_count` | **Active Threats Count** | Number | Total count of active tactical threats in your monitored area. |
-| `sensor.<id>_ukraine_overview` | **Ukraine Map & Tactical Overview** | Text | *Disabled by default.* Comprehensive real-time breakdown of all oblasts (`regions_status`), districts (`districts`), and airborne targets (`tactical_threats`) across Ukraine for AWTRIX displays and maps. |
+| `sensor.<id>_ukraine_overview` | **All Ukraine (Threat Map)** | Text | *Disabled by default.* Comprehensive real-time breakdown of all oblasts (`states`, `regions_status`), 16-bit integer threat bitmasks for microcontrollers (`threat_flags`), all 144 districts (`districts`), and airborne targets (`tactical_threats`) across Ukraine for AWTRIX displays, ESP32, and maps. |
 
 ### ⚡ Event Entity (`event`)
 
 * `event.<id>_threat_event` — fires discrete event states:
   * `alarm_started` — alert started (provides level, timestamp, summary);
   * `alarm_cancelled` — all-clear / alert ended (provides duration in minutes);
-  * `threat_detected` — new specific threat detected (provides threat type, direction, origin).
+  * `threat_detected` — new specific threat detected (provides threat type, direction, origin);
+  * `threat_cancelled` — tactical threat cleared.
 
 ### 🗺️ AWTRIX / Ulanzi TC001 & Map Cards Usage
 The `sensor.<id>_ukraine_overview` sensor is specifically designed for rendering live Ukraine alert maps (such as on AWTRIX Light LED matrix clocks or SVG dashboard maps):
-* **How to enable:** Go to *Settings* ➔ *Devices & Services* ➔ *eTryvoga* ➔ click on the disabled *«Ukraine Map & Tactical Overview»* sensor ➔ toggle *«Enable»*.
+* **How to enable:** Go to *Settings* ➔ *Devices & Services* ➔ *eTryvoga* ➔ click on the disabled *«All Ukraine (Threat Map)»* sensor ➔ toggle *«Enable»*.
 * **Database Optimization (RAM-only):** We strongly recommend adding this entity to your `recorder.exclude` in `configuration.yaml` so frequent nationwide updates stay in memory without bloating your database:
   ```yaml
   recorder:
     exclude:
       entity_globs:
-        - sensor.*_ukraine_overview
+        - sensor.*_ukraine_overview*
   ```
-* **Jinja2 Template Example for AWTRIX / ESPHome:**
+* **Jinja2 Template Examples for AWTRIX / ESPHome:**
   ```jinja2
-  {{ state_attr('sensor.etryvoga_zaporizka_oblast_ukraine_overview', 'regions_status')['Запорізька'] }}
-  {# Returns: 'clear', 'yellow', or 'red' #}
+  {# 1. Check alert status for an oblast (compatible with LED map mappings) #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].enabled }}
+
+  {# 2. Check for guided bomb (KAB) danger #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].kab }}
+
+  {# 3. Get ready-to-use LED color ('red', 'yellow', or 'clear') #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].color }}
+
+  {# 4. Numeric threat bitmask for ESP32 / ESPHome #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'threat_flags')['Запорізька область'] }}
   ```
 
 ---
