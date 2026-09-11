@@ -26,6 +26,11 @@ from .const import (
 from .coordinator import ETryvogaDataUpdateCoordinator
 
 
+import logging
+
+_LOGGER = logging.getLogger(__name__)
+
+
 @dataclass(frozen=True, kw_only=True)
 class ETryvogaSensorDescription(SensorEntityDescription):
     """Class describing eTryvoga sensor entities."""
@@ -81,7 +86,16 @@ async def async_setup_entry(
         )
         for description in SENSOR_DESCRIPTIONS
     ]
-    entities.append(ETryvogaUkraineOverviewSensor(coordinator, entry))
+    try:
+        overview_sensor = ETryvogaUkraineOverviewSensor(coordinator, entry)
+        entities.append(overview_sensor)
+        _LOGGER.warning(
+            "ETRYVOGA SENSOR SETUP: Added %d entities, overview entity unique_id: %s",
+            len(entities),
+            overview_sensor.unique_id,
+        )
+    except Exception as err:
+        _LOGGER.exception("ETRYVOGA SENSOR SETUP ERROR creating overview sensor: %s", err)
 
     async_add_entities(entities)
 
@@ -149,8 +163,7 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
     _attr_name = "єТривога: Вся Україна (Карта загроз)"
     _attr_attribution = ATTRIBUTION
     _attr_icon = "mdi:map-legend"
-    _attr_entity_registry_enabled_default = False
-    _attr_suggested_object_id = "etryvoga_ukraine_overview"
+    _attr_unique_id = "etryvoga_ukraine_overview"
 
     def __init__(
         self,
@@ -159,14 +172,23 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
     ) -> None:
         """Initialize the nationwide overview sensor."""
         super().__init__(coordinator)
-        self._attr_unique_id = "etryvoga_ukraine_overview"
+        self.entity_description = SensorEntityDescription(
+            key="ukraine_overview",
+            name="єТривога: Вся Україна (Карта загроз)",
+            icon="mdi:map-legend",
+        )
         self._attr_device_info = DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
-            identifiers={(DOMAIN, entry.entry_id)},
+            identifiers={(DOMAIN, "ukraine_overview_service")},
             manufacturer=MANUFACTURER,
-            name=entry.title,
+            name="єТривога (Вся Україна)",
             configuration_url="https://map.etryvoga.com",
         )
+
+    @property
+    def suggested_object_id(self) -> str | None:
+        """Return clean entity ID object name."""
+        return "etryvoga_ukraine_overview"
 
     @property
     def native_value(self) -> Any:
@@ -180,9 +202,13 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
         data = self.coordinator.data or {}
         country = data.get("country_overview") or {}
         return {
+            "states": country.get("states", {}),
+            "active_regions": country.get("active_regions", []),
+            "threat_flags": country.get("threat_flags", {}),
             "regions_status": country.get("regions_status", {}),
             "oblasts": country.get("oblasts", {}),
             "districts": country.get("districts", {}),
             "tactical_threats": country.get("tactical_threats", []),
             "counts": country.get("counts", {}),
         }
+

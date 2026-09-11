@@ -33,6 +33,18 @@ from .const import (
     THREAT_ROCKET,
     THREAT_SHELLING,
     USER_AGENT,
+    BIT_AIR,
+    BIT_ARTILLERY,
+    BIT_BALLISTIC,
+    BIT_CHEMICAL,
+    BIT_DRONE,
+    BIT_EXPLOSION,
+    BIT_KAB,
+    BIT_NUCLEAR,
+    BIT_OBLAST_ALERT,
+    BIT_RECON,
+    BIT_ROCKET,
+    BIT_URBAN_FIGHTS,
 )
 from .geo_data import DISTRICTS_BY_SLUG, OBLAST_REGIONS, OBLAST_TO_DISTRICTS
 
@@ -329,12 +341,54 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def _build_country_overview(
         self, alerts_payload: dict[str, Any], confirmed_items: list[dict[str, Any]]
     ) -> dict[str, Any]:
-        """Aggregate country-wide status for LED matrices, AWTRIX, and custom maps."""
+        """Aggregate country-wide status for LED matrices (JAAM/AWTRIX/Ulanzi) and custom maps."""
         districts = alerts_payload.get("districts", [])
         districts_by_slug = {d.get("slug"): d for d in districts if d.get("slug")}
 
+        # Stem lookup for matching tactical threats to oblasts
+        oblast_keywords: dict[str, list[str]] = {
+            "Вінницька область": ["вінниц"],
+            "Волинська область": ["волин", "луцьк"],
+            "Дніпропетровська область": ["дніпро", "крив", "нікопол", "марганець", "покров", "павлоград", "самарів"],
+            "Донецька область": ["донецьк", "краматорськ", "слов'янськ", "покровськ", "бахмут", "маріупол"],
+            "Житомирська область": ["житомир", "коростен", "звягель", "бердичів"],
+            "Закарпатська область": ["закарпат", "ужгород", "мукачев"],
+            "Запорізька область": ["запоріз", "оріхів", "гуляйпол", "полог", "василівк", "бердянськ", "мелітопол"],
+            "Івано-Франківська область": ["івано-франків", "коломий", "калуш"],
+            "Київська область": ["київськ", "біла церква", "бровар", "бориспіл", "вишгород", "буча", "ірпінь", "фастів", "славутич"],
+            "м. Київ": ["м. київ", "столиц"],
+            "Кіровоградська область": ["кіровоград", "кропивниц", "олександрій"],
+            "Луганська область": ["луганськ", "сіверськодонецьк", "лисичанськ"],
+            "Львівська область": ["львів", "дрогобич", "стрий", "червоноград", "шептицьк"],
+            "Миколаївська область": ["миколаїв", "вознесенськ", "очаків", "первомайськ"],
+            "Одеська область": ["одес", "ізмаїл", "чорноморськ", "білгород"],
+            "Полтавська область": ["полтав", "кременчук", "миргород", "лубни"],
+            "Рівненська область": ["рівнен", "сарни", "дубно", "варош"],
+            "Сумська область": ["сумськ", "конотоп", "шостк", "охтирк", "ромен"],
+            "Тернопільська область": ["тернопіль", "кременець", "чортків"],
+            "Харківська область": ["харків", "куп'янськ", "ізюм", "чугуїв", "лозов", "богодухів"],
+            "Херсонська область": ["херсон", "берислав", "каховк", "скадовськ", "генічеськ"],
+            "Хмельницька область": ["хмельниц", "кам'янець", "шепетівк"],
+            "Черкаська область": ["черкас", "умань", "сміла", "золотонош"],
+            "Чернівецька область": ["чернівець", "буковин"],
+            "Чернігівська область": ["чернігів", "ніжин", "прилук", "корюківк", "новгород-сіверськ"],
+            "АР Крим": ["крим", "севастопол", "сімферопол", "керч", "ялт", "євпатор"],
+        }
+
+        # Index threats by oblast
+        threats_by_oblast: dict[str, list[dict[str, Any]]] = {obl: [] for obl in OBLAST_REGIONS}
+        for t in confirmed_items:
+            text = f"{t.get('title', '')} {t.get('body', '')} {t.get('region', '')}".lower()
+            for obl, kws in oblast_keywords.items():
+                if any(kw in text for kw in kws):
+                    threats_by_oblast[obl].append(t)
+
         regions_status: dict[str, str] = {}
         oblasts_data: dict[str, Any] = {}
+        states_data: dict[str, Any] = {}
+        threat_flags_data: dict[str, int] = {}
+        active_regions: list[str] = []
+
         sirens_districts_count = 0
         sirens_oblasts_count = 0
 
@@ -344,25 +398,98 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             active_dstrs = [d for d in obl_districts if d.get("status") == STATUS_SIREN]
             sirens_districts_count += len(active_dstrs)
+            is_siren = len(active_dstrs) > 0
 
-            if active_dstrs:
+            # JAAM Bitmask calculation
+            flags = 0
+            if is_siren:
                 sirens_oblasts_count += 1
-                is_red = any(d.get("alertLevel") == "red" for d in active_dstrs)
+                flags |= BIT_AIR
+                if len(active_dstrs) == len(obl_districts) and len(obl_districts) > 0:
+                    flags |= BIT_OBLAST_ALERT
+
+            obl_threats = threats_by_oblast.get(obl, [])
+            has_kab = False
+            has_drone = False
+            has_missile = False
+            has_artillery = False
+            has_explosion = False
+            has_recon = False
+
+            for t in obl_threats:
+                ttype = t.get("type", "")
+                if ttype in ("kab", "fab"):
+                    flags |= BIT_KAB
+                    has_kab = True
+                elif ttype in ("drone", "uav", "shahed"):
+                    flags |= BIT_DRONE
+                    has_drone = True
+                elif ttype in ("rocket", "missile"):
+                    flags |= BIT_ROCKET
+                    has_missile = True
+                elif ttype in ("ballistic",):
+                    flags |= BIT_BALLISTIC
+                    has_missile = True
+                elif ttype in ("recon", "zala", "supercam"):
+                    flags |= BIT_RECON
+                    has_recon = True
+                elif ttype in ("artillery", "shelling"):
+                    flags |= BIT_ARTILLERY
+                    has_artillery = True
+                elif ttype in ("explosion",):
+                    flags |= BIT_EXPLOSION
+                    has_explosion = True
+
+            # Determine level & LED display color (red / yellow / blue)
+            if is_siren:
+                is_red = any(d.get("alertLevel") == "red" for d in active_dstrs) or has_kab or has_missile
                 obl_level = LEVEL_RED if is_red else LEVEL_YELLOW
+                obl_color = "red" if is_red else "yellow"
                 obl_status = STATUS_SIREN
+            elif flags > 0:
+                obl_level = LEVEL_YELLOW
+                obl_color = "yellow"
+                obl_status = LEVEL_CLEAR
             else:
                 obl_level = LEVEL_CLEAR
+                obl_color = "blue"
                 obl_status = LEVEL_CLEAR
+
+            is_enabled = is_siren or (flags > 0)
+            if is_enabled:
+                active_regions.append(obl)
 
             oblasts_data[obl] = {
                 "status": obl_status,
                 "level": obl_level,
+                "color": obl_color,
+                "threat_flags": flags,
                 "active_districts": len(active_dstrs),
                 "total_districts": len(obl_districts),
                 "siren_districts": [d.get("title") for d in active_dstrs if d.get("title")],
             }
 
-            # Map multiple key variants for flexible Jinja2 / AWTRIX templates
+            region_state = {
+                "enabled": is_enabled,
+                "level": obl_level,
+                "color": obl_color,
+                "threat_flags": flags,
+                "siren": is_siren,
+                "air": is_siren,
+                "kab": has_kab,
+                "drone": has_drone,
+                "missile": has_missile,
+                "artillery": has_artillery,
+                "explosion": has_explosion,
+                "recon": has_recon,
+                "active_districts": len(active_dstrs),
+                "total_districts": len(obl_districts),
+                "siren_districts": [d.get("title") for d in active_dstrs if d.get("title")],
+            }
+            states_data[obl] = region_state
+            threat_flags_data[obl] = flags
+
+            # Map multiple key variants for flexible Jinja2 / AWTRIX / Ulanzi templates
             regions_status[obl] = obl_level
             short = obl.replace(" область", "")
             regions_status[short] = obl_level
@@ -371,12 +498,44 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             elif short == "АР Крим":
                 regions_status["Крим"] = obl_level
 
+        # Add popular aliases for instant template access (e.g. states['Київ'])
+        if "м. Київ" in states_data:
+            states_data["Київ"] = states_data["м. Київ"]
+            threat_flags_data["Київ"] = threat_flags_data["м. Київ"]
+        if "АР Крим" in states_data:
+            states_data["Крим"] = states_data["АР Крим"]
+            threat_flags_data["Крим"] = threat_flags_data["АР Крим"]
+
         # Extra city units like Sevastopol
         if "SEVASTOPOL-CITY" in districts_by_slug:
             sev = districts_by_slug["SEVASTOPOL-CITY"]
-            sev_lvl = LEVEL_RED if sev.get("status") == STATUS_SIREN else LEVEL_CLEAR
+            sev_siren = sev.get("status") == STATUS_SIREN
+            sev_flags = (BIT_AIR | BIT_OBLAST_ALERT) if sev_siren else 0
+            sev_lvl = LEVEL_RED if sev_siren else LEVEL_CLEAR
+            sev_color = "red" if sev_siren else "blue"
             regions_status["м. Севастополь"] = sev_lvl
             regions_status["Севастополь"] = sev_lvl
+            sev_state = {
+                "enabled": sev_siren,
+                "level": sev_lvl,
+                "color": sev_color,
+                "threat_flags": sev_flags,
+                "siren": sev_siren,
+                "air": sev_siren,
+                "kab": False,
+                "drone": False,
+                "missile": False,
+                "artillery": False,
+                "explosion": False,
+                "recon": False,
+                "active_districts": 1 if sev_siren else 0,
+                "total_districts": 1,
+                "siren_districts": ["Севастополь"] if sev_siren else [],
+            }
+            states_data["м. Севастополь"] = sev_state
+            states_data["Севастополь"] = sev_state
+            threat_flags_data["м. Севастополь"] = sev_flags
+            threat_flags_data["Севастополь"] = sev_flags
 
         # Format tactical threats
         tactical_threats = []
@@ -463,6 +622,9 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         return {
             "summary": summary,
+            "states": states_data,
+            "active_regions": active_regions,
+            "threat_flags": threat_flags_data,
             "regions_status": regions_status,
             "oblasts": oblasts_data,
             "districts": districts_dict,

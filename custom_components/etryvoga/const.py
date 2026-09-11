@@ -58,3 +58,18 @@ EVENT_ALARM_STARTED = "alarm_started"
 EVENT_ALARM_CANCELLED = "alarm_cancelled"
 EVENT_THREAT_DETECTED = "threat_detected"
 EVENT_THREAT_CANCELLED = "threat_cancelled"
+
+# JAAM Protocol Bitmasks (ws://ws.jaam.net.ua:80/data_fusion_v1)
+BIT_AIR = 1 << 0          # 1: Air raid alert
+BIT_ARTILLERY = 1 << 1    # 2: Artillery shelling
+BIT_URBAN_FIGHTS = 1 << 2 # 4: Urban combats
+BIT_CHEMICAL = 1 << 3     # 8: Chemical danger
+BIT_NUCLEAR = 1 << 4      # 16: Radiation / Nuclear
+BIT_DRONE = 1 << 5        # 32: Drones / Shahed
+BIT_ROCKET = 1 << 6       # 64: Cruise missiles
+BIT_KAB = 1 << 7          # 128: Guided bombs (KAB)
+BIT_BALLISTIC = 1 << 8    # 256: Ballistic missiles
+BIT_EXPLOSION = 1 << 9    # 512: Explosions
+BIT_RECON = 1 << 10       # 1024: Recon UAV
+BIT_OBLAST_ALERT = 1 << 12# 4096: Entire oblast in alert
+
