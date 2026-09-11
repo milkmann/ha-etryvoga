@@ -159,8 +159,8 @@ class ETryvogaSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEnt
 class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEntity):
     """Nationwide tactical overview sensor for LED matrices (AWTRIX) and maps."""
 
-    _attr_has_entity_name = False
-    _attr_name = "єТривога: Вся Україна (Карта загроз)"
+    _attr_has_entity_name = True
+    _attr_translation_key = "ukraine_overview"
     _attr_attribution = ATTRIBUTION
     _attr_icon = "mdi:map-legend"
     _attr_entity_registry_enabled_default = False
@@ -174,7 +174,7 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
         super().__init__(coordinator)
         self.entity_description = SensorEntityDescription(
             key="ukraine_overview",
-            name="єТривога: Вся Україна (Карта загроз)",
+            translation_key="ukraine_overview",
             icon="mdi:map-legend",
             entity_registry_enabled_default=False,
         )
