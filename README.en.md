@@ -82,17 +82,17 @@ The `sensor.<id>_ukraine_overview` sensor is specifically designed for rendering
   ```
 * **Jinja2 Template Examples for AWTRIX / ESPHome:**
   ```jinja2
-  {# 1. Check alert status for an oblast (compatible with LED map mappings) #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].enabled }}
+  {# 1. Check alert status for Kyiv (compatible with LED map mappings) #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].enabled }}
 
-  {# 2. Check for guided bomb (KAB) danger #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].kab }}
+  {# 2. Check for drone (UAV) threat in Kyiv #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].drone }}
 
   {# 3. Get ready-to-use LED color ('red', 'yellow', or 'clear') #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].color }}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].color }}
 
   {# 4. Numeric threat bitmask for ESP32 / ESPHome #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'threat_flags')['Запорізька область'] }}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'threat_flags')['м. Київ'] }}
   ```
 
 ---

@@ -80,17 +80,17 @@
   ```
 * **Приклади використання в шаблонах Jinja2:**
   ```jinja2
-  {# 1. Перевірка тривоги в області (сумісно з маппінгами LED-карт) #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].enabled }}
+  {# 1. Перевірка тривоги в м. Київ (сумісно з маппінгами LED-карт) #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].enabled }}
 
-  {# 2. Перевірка конкретної загрози КАБ #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].kab }}
+  {# 2. Перевірка конкретної загрози БПЛА для Києва #}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].drone }}
 
   {# 3. Отримання готового кольору для світлодіода ('red', 'yellow' або 'clear') #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['Запорізька область'].color }}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'states')['м. Київ'].color }}
 
   {# 4. Числова бітова маска загроз для ESP32 / ESPHome #}
-  {{ state_attr('sensor.etryvoga_ukraine_overview', 'threat_flags')['Запорізька область'] }}
+  {{ state_attr('sensor.etryvoga_ukraine_overview', 'threat_flags')['м. Київ'] }}
   ```
 
 ---
