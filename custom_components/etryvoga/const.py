@@ -16,7 +16,7 @@ API_NOTIFICATIONS_URL = f"{API_BASE_URL}/api/map/notifications"
 API_LIVE_SSE_URL = f"{API_BASE_URL}/api/map/live"
 
 # Headers
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HomeAssistant-eTryvoga/0.1.3"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HomeAssistant-eTryvoga/0.1.4"
 
 # Timing
 DEFAULT_SCAN_INTERVAL = timedelta(minutes=5)
