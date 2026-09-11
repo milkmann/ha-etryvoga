@@ -38,13 +38,16 @@ trigger:
 
 condition: []
 
+variables:
+  summary_sensor_entity: !input summary_sensor
+
 action:
   - action: !input tts_service
     target: !input media_players
     data:
       message: >
         Увага! Зафіксовано загрозу керованих авіабомб!
-        {{ states(summary_sensor) }}.
+        {{ states(summary_sensor_entity) }}.
         Негайно перейдіть в безпечне місце або укриття!
 
 mode: single
