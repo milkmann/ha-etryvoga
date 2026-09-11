@@ -18,6 +18,7 @@ from .const import (
     ATTRIBUTION,
     DOMAIN,
     MANUFACTURER,
+    THREAT_ARTILLERY,
     THREAT_DRONE,
     THREAT_EXPLOSION,
     THREAT_KAB,
@@ -68,7 +69,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ETryvogaBinarySensorDescription, ...] = (
         translation_key="artillery_threat",
         device_class=BinarySensorDeviceClass.SAFETY,
         icon="mdi:tank",
-        is_threat_key=THREAT_SHELLING,
+        is_threat_key=THREAT_ARTILLERY,
     ),
     ETryvogaBinarySensorDescription(
         key="recon_threat",

@@ -49,9 +49,30 @@ LEVEL_COLORS = {
 THREAT_KAB = "kab"
 THREAT_DRONE = "drone"
 THREAT_ROCKET = "rocket"
-THREAT_SHELLING = "shelling"
+THREAT_ARTILLERY = "artillery"
+THREAT_SHELLING = THREAT_ARTILLERY  # Backward-compatible alias
 THREAT_RECON = "recon_drone"
 THREAT_EXPLOSION = "explosion"
+
+
+def normalize_threat_type(raw_type: str | None) -> str:
+    """Normalize raw threat type strings from API into canonical constants."""
+    if not raw_type:
+        return "unknown"
+    t = str(raw_type).lower().strip()
+    if t in ("drone", "uav", "shahed"):
+        return THREAT_DRONE
+    if t in ("kab", "fab"):
+        return THREAT_KAB
+    if t in ("rocket", "missile", "ballistic"):
+        return THREAT_ROCKET
+    if t in ("artillery", "shelling"):
+        return THREAT_ARTILLERY
+    if t in ("recon_drone", "recon", "zala", "supercam"):
+        return THREAT_RECON
+    if t in ("explosion",):
+        return THREAT_EXPLOSION
+    return t
 
 # Event Types for HA EventEntity
 EVENT_ALARM_STARTED = "alarm_started"

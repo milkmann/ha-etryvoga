@@ -57,7 +57,7 @@ SENSOR_DESCRIPTIONS: tuple[ETryvogaSensorDescription, ...] = (
         icon="mdi:timer-outline",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.MINUTES,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.MEASUREMENT,
         value_key="duration_minutes",
     ),
     ETryvogaSensorDescription(

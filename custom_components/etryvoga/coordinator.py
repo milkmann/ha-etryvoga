@@ -20,12 +20,14 @@ from .const import (
     DOMAIN,
     EVENT_ALARM_CANCELLED,
     EVENT_ALARM_STARTED,
+    EVENT_THREAT_CANCELLED,
     EVENT_THREAT_DETECTED,
     LEVEL_CLEAR,
     LEVEL_RED,
     LEVEL_YELLOW,
     STATUS_CANCEL,
     STATUS_SIREN,
+    THREAT_ARTILLERY,
     THREAT_DRONE,
     THREAT_EXPLOSION,
     THREAT_KAB,
@@ -33,6 +35,7 @@ from .const import (
     THREAT_ROCKET,
     THREAT_SHELLING,
     USER_AGENT,
+    normalize_threat_type,
     BIT_AIR,
     BIT_ARTILLERY,
     BIT_BALLISTIC,
@@ -82,6 +85,8 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         self._sse_task: asyncio.Task | None = None
         self._is_stopped = False
+        self._is_sse_active = False
+        self._sse_last_received = 0.0
         self._raw_alerts_cache: dict[str, Any] = {}
         self._raw_confirmed_cache: list[dict[str, Any]] = []
 
@@ -110,19 +115,33 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 timeout = aiohttp.ClientTimeout(total=None, sock_read=90)
                 async with self.session.get(API_LIVE_SSE_URL, headers=headers, timeout=timeout) as resp:
                     if resp.status != 200:
+                        self._is_sse_active = False
                         _LOGGER.warning("eTryvoga SSE stream returned status %s, retrying in %ss", resp.status, backoff)
                         await asyncio.sleep(backoff)
                         backoff = min(backoff * 2, 60)
                         continue
 
                     backoff = 2  # Reset backoff on successful handshake
+                    self._is_sse_active = True
                     _LOGGER.info("Connected to eTryvoga live SSE eventstream successfully")
+
+                    current_event: str | None = None
 
                     async for line in resp.content:
                         if self._is_stopped:
                             break
                         decoded = line.decode("utf-8", errors="ignore").strip()
                         if not decoded:
+                            current_event = None
+                            continue
+
+                        # Handle SSE event type headers
+                        if decoded.startswith("event:"):
+                            current_event = decoded[6:].strip().lower()
+                            continue
+
+                        # Ignore health / ping events to avoid unnecessary entity updates
+                        if current_event in ("health", "ping"):
                             continue
 
                         # SSE payload lines start with 'data:' or raw JSON in some proxies
@@ -130,15 +149,26 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         if payload_str.startswith("{") and payload_str.endswith("}"):
                             try:
                                 payload = json.loads(payload_str)
+                                # Ignore health/ping payload dicts
+                                if "health" in payload and len(payload) == 1:
+                                    continue
+                                self._is_sse_active = True
+                                self._sse_last_received = asyncio.get_running_loop().time()
                                 self._handle_live_payload(payload)
                             except Exception as err:
                                 _LOGGER.debug("Could not parse SSE JSON line: %s (%s)", decoded, err)
 
             except asyncio.CancelledError:
+                self._is_sse_active = False
                 break
             except Exception as err:
+                self._is_sse_active = False
                 if not self._is_stopped:
-                    _LOGGER.warning("eTryvoga SSE stream error: %s. Reconnecting in %ss...", err, backoff)
+                    err_str = str(err).lower()
+                    if isinstance(err, (TimeoutError, asyncio.TimeoutError)) or "timeout" in err_str:
+                        _LOGGER.debug("eTryvoga SSE stream socket timeout (keepalive cycle), reconnecting in %ss...", backoff)
+                    else:
+                        _LOGGER.warning("eTryvoga SSE stream error: %s. Reconnecting in %ss...", err, backoff)
                     await asyncio.sleep(backoff)
                     backoff = min(backoff * 2, 60)
 
@@ -150,19 +180,35 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._raw_alerts_cache["districts"] = new_districts
 
         # 2. Collect stories from live stream categories
+        categorized_keys = (
+            "uavStories",
+            "droneStories",
+            "kabStories",
+            "rocketStories",
+            "shellingStories",
+            "reconStories",
+            "explosionStories",
+        )
+        has_story_keys = any(k in live_data for k in categorized_keys) or "stories" in live_data
+
         new_confirmed: list[dict[str, Any]] = []
-        for key in ("uavStories", "droneStories", "kabStories", "rocketStories", "shellingStories", "reconStories", "explosionStories"):
+        for key in categorized_keys:
             stories = live_data.get(key, [])
             if isinstance(stories, list):
                 new_confirmed.extend(stories)
 
         # Fallback to top-level stories if categorized lists were empty
-        if not new_confirmed:
+        if not new_confirmed and "stories" in live_data:
             general_stories = live_data.get("stories", [])
             if isinstance(general_stories, list):
-                new_confirmed.extend(general_stories)
+                for st in general_stories:
+                    st_type = st.get("type", "")
+                    if st_type not in ("siren", "cancel"):
+                        new_confirmed.append(st)
 
-        if new_confirmed:
+        # Update confirmed cache whenever threat lists are present in payload
+        # (clears cache when 0 threats, preventing stuck old threats)
+        if has_story_keys:
             self._raw_confirmed_cache = new_confirmed
 
         # 3. Re-aggregate state immediately with live data
@@ -183,14 +229,19 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     raise UpdateFailed(f"Failed to fetch alerts: HTTP {resp.status}")
                 alerts_data = await resp.json()
 
-            async with self.session.get(API_CONFIRMED_URL, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as resp:
-                if resp.status == 200:
-                    confirmed_data = await resp.json()
-                else:
-                    confirmed_data = self._raw_confirmed_cache
+            # Protect confirmed cache: do NOT overwrite with partial REST data if SSE stream is healthy
+            sse_healthy = (
+                self._is_sse_active
+                and (asyncio.get_running_loop().time() - self._sse_last_received < 120)
+            )
+            if not sse_healthy or not self._raw_confirmed_cache:
+                async with self.session.get(API_CONFIRMED_URL, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                    if resp.status == 200:
+                        confirmed_data = await resp.json()
+                        if isinstance(confirmed_data, list):
+                            self._raw_confirmed_cache = confirmed_data
 
             self._raw_alerts_cache = alerts_data
-            self._raw_confirmed_cache = confirmed_data if isinstance(confirmed_data, list) else []
 
             # Ensure background SSE stream is active
             await self.async_start_sse()
@@ -263,12 +314,30 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             for w in filtered:
                 stems.add(w)
                 stem = w
-                for ending in ("ського", "ському", "ська", "ське", "ський", "ських", "ської", "івський", "івська", "івське", "зький", "зька", "зьке", "жжя"):
+                for ending in (
+                    "івського", "івському", "івська", "івське", "івський", "івських", "івської",
+                    "ського", "ському", "ська", "ське", "ський", "ських", "ської",
+                    "цького", "цькому", "цька", "цьке", "цький", "цьких", "ської",
+                    "зького", "зькому", "зька", "зьке", "зький", "зьких", "зької",
+                    "жжя", "щина", "щини", "щині", "щиною",
+                ):
                     if stem.endswith(ending):
                         stem = stem[:-len(ending)]
                         break
-                if len(stem) >= 4:
+                if len(stem) >= 3:
                     stems.add(stem)
+                # Suffixes with -цьк- (e.g. Луцький -> луць, Вінницька -> вінниць/вінни, Чернівецька -> чернів)
+                if w.endswith(("цький", "цьке", "цька", "цькому", "цького", "цьких", "ської")):
+                    for suf in ("кий", "ка", "ке", "кому", "кого", "ких", "кої"):
+                        if w.endswith(suf):
+                            s2 = w[:-len(suf)]
+                            if len(s2) >= 3:
+                                stems.add(s2)
+                                if s2.endswith("к"):
+                                    stems.add(s2[:-1])
+                                if s2.endswith("ець"):
+                                    stems.add(s2[:-3])
+                            break
             return list(stems)
 
         oblast_stems = _get_stems(self.oblast)
@@ -276,10 +345,13 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         city_stems = _get_stems(self.city_name) if self.city_name else []
 
         for item in confirmed_items:
-            title = item.get("title", "")
+            title = item.get("title") or ""
+            body = item.get("body") or ""
+            region = item.get("region") or ""
             title_lower = title.lower()
-            body_lower = item.get("body", "").lower()
-            text_to_search = f"{title_lower} {body_lower}"
+            body_lower = body.lower()
+            region_lower = region.lower()
+            text_to_search = f"{title_lower} {body_lower} {region_lower}"
 
             # Check if threat affects our city, district, or oblast
             is_city_match = bool(city_stems and any(cs in text_to_search for cs in city_stems))
@@ -287,13 +359,22 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             is_oblast_match = bool(self.include_neighbors and oblast_stems and any(os in text_to_search for os in oblast_stems))
 
             if is_city_match or is_district_match or is_oblast_match:
+                raw_type = item.get("type", "unknown")
+                norm_type = normalize_threat_type(raw_type)
                 approach = item.get("approach") or {}
-                origin = approach.get("origin_title") or approach.get("cardinal") or "Не вказано"
+                origin = (
+                    approach.get("origin_title")
+                    or approach.get("heading")
+                    or approach.get("area_sector")
+                    or approach.get("cardinal")
+                    or "Не вказано"
+                )
                 relevant_threats.append({
                     "id": item.get("id"),
-                    "type": item.get("type", "unknown"),
+                    "type": norm_type,
+                    "raw_type": raw_type,
                     "title": title,
-                    "body": item.get("body", ""),
+                    "body": body,
                     "origin": origin,
                     "time": item.get("createdAtParsed", ""),
                     "is_direct": bool(is_city_match or is_district_match),
@@ -304,7 +385,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             THREAT_KAB: any(t["type"] == THREAT_KAB for t in relevant_threats),
             THREAT_DRONE: any(t["type"] == THREAT_DRONE for t in relevant_threats),
             THREAT_ROCKET: any(t["type"] == THREAT_ROCKET for t in relevant_threats),
-            THREAT_SHELLING: any(t["type"] == THREAT_SHELLING for t in relevant_threats),
+            THREAT_ARTILLERY: any(t["type"] == THREAT_ARTILLERY for t in relevant_threats),
             THREAT_RECON: any(t["type"] == THREAT_RECON for t in relevant_threats),
             THREAT_EXPLOSION: any(t["type"] == THREAT_EXPLOSION for t in relevant_threats),
         }
@@ -315,22 +396,32 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Detect state transitions for event generation
         previous_data = self.data or {}
         prev_siren = previous_data.get("is_siren", False)
+        prev_threats = previous_data.get("threats", [])
         event_trigger = None
 
         if is_siren and not prev_siren:
             event_trigger = {
                 "event_type": EVENT_ALARM_STARTED,
                 "payload": {"district": self.district_title, "level": alert_level, "summary": tactical_summary},
+                "ts": now.isoformat(),
             }
         elif not is_siren and prev_siren:
             event_trigger = {
                 "event_type": EVENT_ALARM_CANCELLED,
                 "payload": {"district": self.district_title, "duration_minutes": duration_minutes},
+                "ts": now.isoformat(),
             }
-        elif relevant_threats and relevant_threats != previous_data.get("threats", []):
+        elif relevant_threats and relevant_threats != prev_threats:
             event_trigger = {
                 "event_type": EVENT_THREAT_DETECTED,
                 "payload": {"district": self.district_title, "threats": relevant_threats, "summary": tactical_summary},
+                "ts": now.isoformat(),
+            }
+        elif not relevant_threats and prev_threats:
+            event_trigger = {
+                "event_type": EVENT_THREAT_CANCELLED,
+                "payload": {"district": self.district_title, "summary": tactical_summary},
+                "ts": now.isoformat(),
             }
 
         country_overview = self._build_country_overview(alerts_payload, confirmed_items)
@@ -358,24 +449,24 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         # Stem lookup for matching tactical threats to oblasts
         oblast_keywords: dict[str, list[str]] = {
-            "Вінницька область": ["вінниц"],
-            "Волинська область": ["волин", "луцьк"],
-            "Дніпропетровська область": ["дніпро", "крив", "нікопол", "марганець", "покров", "павлоград", "самарів"],
+            "Вінницька область": ["вінниц", "вінниччин"],
+            "Волинська область": ["волин", "луцьк", "ковель", "володимир"],
+            "Дніпропетровська область": ["дніпро", "крив", "нікопол", "марганець", "покров", "павлоград", "самарів", "кам'янськ"],
             "Донецька область": ["донецьк", "краматорськ", "слов'янськ", "покровськ", "бахмут", "маріупол"],
             "Житомирська область": ["житомир", "коростен", "звягель", "бердичів"],
             "Закарпатська область": ["закарпат", "ужгород", "мукачев"],
             "Запорізька область": ["запоріз", "оріхів", "гуляйпол", "полог", "василівк", "бердянськ", "мелітопол"],
             "Івано-Франківська область": ["івано-франків", "коломий", "калуш"],
             "Київська область": ["київськ", "біла церква", "бровар", "бориспіл", "вишгород", "буча", "ірпінь", "фастів", "славутич"],
-            "м. Київ": ["м. київ", "столиц"],
+            "м. Київ": ["м. київ", "столиц", "(київ)", "-cds", "(kyiv)"],
             "Кіровоградська область": ["кіровоград", "кропивниц", "олександрій"],
             "Луганська область": ["луганськ", "сіверськодонецьк", "лисичанськ"],
             "Львівська область": ["львів", "дрогобич", "стрий", "червоноград", "шептицьк"],
             "Миколаївська область": ["миколаїв", "вознесенськ", "очаків", "первомайськ"],
             "Одеська область": ["одес", "ізмаїл", "чорноморськ", "білгород"],
             "Полтавська область": ["полтав", "кременчук", "миргород", "лубни"],
-            "Рівненська область": ["рівнен", "сарни", "дубно", "варош"],
-            "Сумська область": ["сумськ", "конотоп", "шостк", "охтирк", "ромен"],
+            "Рівненська область": ["рівнен", "сарни", "дубно", "вараш"],
+            "Сумська область": ["суми", "сумськ", "сумщин", "конотоп", "шостк", "охтирк", "ромен"],
             "Тернопільська область": ["тернопіль", "кременець", "чортків"],
             "Харківська область": ["харків", "куп'янськ", "ізюм", "чугуїв", "лозов", "богодухів"],
             "Херсонська область": ["херсон", "берислав", "каховк", "скадовськ", "генічеськ"],
@@ -389,9 +480,20 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Index threats by oblast
         threats_by_oblast: dict[str, list[dict[str, Any]]] = {obl: [] for obl in OBLAST_REGIONS}
         for t in confirmed_items:
-            text = f"{t.get('title', '')} {t.get('body', '')} {t.get('region', '')}".lower()
+            t_title = t.get("title") or ""
+            t_body = t.get("body") or ""
+            t_region = t.get("region") or ""
+            text = f"{t_title} {t_body} {t_region}".lower()
             for obl, kws in oblast_keywords.items():
-                if any(kw in text for kw in kws):
+                is_match = False
+                for kw in kws:
+                    if kw in text:
+                        # Prevent Dnipropetrovsk 'покров' matching Donetsk 'покровськ'
+                        if kw == "покров" and "покровськ" in text:
+                            continue
+                        is_match = True
+                        break
+                if is_match:
                     threats_by_oblast[obl].append(t)
 
         regions_status: dict[str, str] = {}
@@ -428,26 +530,26 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             has_recon = False
 
             for t in obl_threats:
-                ttype = t.get("type", "")
-                if ttype in ("kab", "fab"):
+                raw_t = t.get("type", "")
+                norm_t = normalize_threat_type(raw_t)
+                if norm_t == THREAT_KAB:
                     flags |= BIT_KAB
                     has_kab = True
-                elif ttype in ("drone", "uav", "shahed"):
+                elif norm_t == THREAT_DRONE:
                     flags |= BIT_DRONE
                     has_drone = True
-                elif ttype in ("rocket", "missile"):
+                elif norm_t == THREAT_ROCKET:
                     flags |= BIT_ROCKET
+                    if (raw_t or "").lower().strip() == "ballistic":
+                        flags |= BIT_BALLISTIC
                     has_missile = True
-                elif ttype in ("ballistic",):
-                    flags |= BIT_BALLISTIC
-                    has_missile = True
-                elif ttype in ("recon", "zala", "supercam"):
+                elif norm_t == THREAT_RECON:
                     flags |= BIT_RECON
                     has_recon = True
-                elif ttype in ("artillery", "shelling"):
+                elif norm_t == THREAT_ARTILLERY:
                     flags |= BIT_ARTILLERY
                     has_artillery = True
-                elif ttype in ("explosion",):
+                elif norm_t == THREAT_EXPLOSION:
                     flags |= BIT_EXPLOSION
                     has_explosion = True
 
@@ -558,32 +660,34 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         explosions_cnt = 0
 
         for t in confirmed_items:
-            ttype = t.get("type", "")
-            if ttype in ("drone", "uav", "shahed"):
+            raw_t = t.get("type", "")
+            norm_t = normalize_threat_type(raw_t)
+            if norm_t == THREAT_DRONE:
                 drones_cnt += 1
-            elif ttype in ("kab", "fab"):
+            elif norm_t == THREAT_KAB:
                 kabs_cnt += 1
-            elif ttype in ("rocket", "missile", "ballistic"):
+            elif norm_t == THREAT_ROCKET:
                 missiles_cnt += 1
-            elif ttype in ("recon", "zala", "supercam"):
+            elif norm_t == THREAT_RECON:
                 recon_cnt += 1
-            elif ttype in ("artillery", "shelling"):
+            elif norm_t == THREAT_ARTILLERY:
                 shelling_cnt += 1
-            elif ttype in ("explosion",):
+            elif norm_t == THREAT_EXPLOSION:
                 explosions_cnt += 1
 
             appr = t.get("approach") or {}
-            origin = appr.get("origin_title", "")
-            direction = appr.get("cardinal", "")
+            origin = appr.get("origin_title") or appr.get("heading") or appr.get("area_sector") or ""
+            direction = appr.get("heading") or appr.get("area_sector") or appr.get("cardinal", "")
 
             tactical_threats.append({
-                "type": ttype,
-                "title": t.get("title", ""),
-                "region": t.get("region", ""),
+                "type": norm_t,
+                "raw_type": raw_t,
+                "title": t.get("title") or "",
+                "region": t.get("region") or "",
                 "origin": origin,
                 "direction": direction,
-                "time": t.get("createdAtParsed", ""),
-                "body": t.get("body", ""),
+                "time": t.get("createdAtParsed") or "",
+                "body": t.get("body") or "",
             })
 
         counts = {
@@ -608,6 +712,12 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 threat_parts.append(f"{kabs_cnt} КАБ")
             if missiles_cnt > 0:
                 threat_parts.append(f"{missiles_cnt} ракет")
+            if recon_cnt > 0:
+                threat_parts.append(f"{recon_cnt} розвід. БПЛА")
+            if shelling_cnt > 0:
+                threat_parts.append(f"{shelling_cnt} обстрілів")
+            if explosions_cnt > 0:
+                threat_parts.append(f"{explosions_cnt} вибухів")
             parts.append(f"{len(confirmed_items)} загроз ({', '.join(threat_parts)})")
         else:
             parts.append("Загроз немає")
@@ -656,19 +766,32 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         kabs = [t for t in threats if t["type"] == THREAT_KAB]
         drones = [t for t in threats if t["type"] == THREAT_DRONE]
         rockets = [t for t in threats if t["type"] == THREAT_ROCKET]
-        shelling = [t for t in threats if t["type"] == THREAT_SHELLING]
+        artillery = [t for t in threats if t["type"] == THREAT_ARTILLERY]
+        recon = [t for t in threats if t["type"] == THREAT_RECON]
+        explosions = [t for t in threats if t["type"] == THREAT_EXPLOSION]
 
         if kabs:
-            origins = ", ".join(set(k["origin"] for k in kabs if k.get("origin")))
-            parts.append(f"💣 Загроза КАБ (напрямок: {origins})")
+            origins = ", ".join(set(k["origin"] for k in kabs if k.get("origin") and k["origin"] != "Не вказано"))
+            if origins:
+                parts.append(f"💣 Загроза КАБ (напрямок: {origins})")
+            else:
+                parts.append(f"💣 Загроза КАБ ({len(kabs)} подій)")
         if drones:
             parts.append(f"🛸 Ударні БПЛА в зоні контролю ({len(drones)} подій)")
         if rockets:
             parts.append("🚀 Ракетна небезпека!")
-        if shelling:
+        if artillery:
             parts.append("💥 Загроза артобстрілу")
+        if recon:
+            parts.append(f"👁️ Розвідувальний БПЛА ({len(recon)} подій)")
+        if explosions:
+            parts.append(f"⚠️ Повідомлення про вибух ({len(explosions)} подій)")
 
-        return "; ".join(parts) if parts else "Повітряна тривога активна"
+        if parts:
+            return "; ".join(parts)
+        if is_siren:
+            return "Повітряна тривога активна"
+        return "Обстановка спокійна. Тривоги немає."
 
     async def async_close(self) -> None:
         """Cancel and clean up the background SSE stream."""
