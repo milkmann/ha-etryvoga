@@ -225,30 +225,43 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         # Filter confirmed threats relevant to our location
         relevant_threats = []
-        oblast_keywords = [w.lower() for w in self.oblast.split() if len(w) > 3]
-        district_keywords = [w.lower() for w in self.district_title.split() if len(w) > 3]
-        city_keyword = None
-        city_stem = None
-        if self.city_name:
-            clean = self.city_name.lower()
-            for prefix in ("м. ", "смт ", "с. ", "місто "):
-                if clean.startswith(prefix):
-                    clean = clean[len(prefix):]
-            city_keyword = clean.strip()
-            city_stem = city_keyword[:len(city_keyword)-2] if len(city_keyword) > 5 else city_keyword[:4]
+        stopwords = {
+            "область", "області", "областю", "областях",
+            "район", "району", "районі", "районом", "районах",
+            "місто", "міста", "місті", "містом",
+            "громада", "громади", "громаді", "громадою",
+            "селище", "село", "села", "селі", "смт",
+        }
+
+        def _get_stems(text: str) -> list[str]:
+            words = [w.lower().strip("()[]\",.") for w in text.split() if len(w) > 2]
+            filtered = [w for w in words if w not in stopwords]
+            stems: set[str] = set()
+            for w in filtered:
+                stems.add(w)
+                stem = w
+                for ending in ("ського", "ському", "ська", "ське", "ський", "ських", "ської", "івський", "івська", "івське", "зький", "зька", "зьке", "жжя"):
+                    if stem.endswith(ending):
+                        stem = stem[:-len(ending)]
+                        break
+                if len(stem) >= 4:
+                    stems.add(stem)
+            return list(stems)
+
+        oblast_stems = _get_stems(self.oblast)
+        district_stems = _get_stems(self.district_title)
+        city_stems = _get_stems(self.city_name) if self.city_name else []
 
         for item in confirmed_items:
             title = item.get("title", "")
             title_lower = title.lower()
             body_lower = item.get("body", "").lower()
+            text_to_search = f"{title_lower} {body_lower}"
 
             # Check if threat affects our city, district, or oblast
-            is_city_match = bool(
-                (city_keyword and (city_keyword in title_lower or city_keyword in body_lower))
-                or (city_stem and (city_stem in title_lower or city_stem in body_lower))
-            )
-            is_district_match = any(dk in title_lower for dk in district_keywords)
-            is_oblast_match = self.include_neighbors and any(ok in title_lower for ok in oblast_keywords)
+            is_city_match = bool(city_stems and any(cs in text_to_search for cs in city_stems))
+            is_district_match = bool(district_stems and any(ds in text_to_search for ds in district_stems))
+            is_oblast_match = bool(self.include_neighbors and oblast_stems and any(os in text_to_search for os in oblast_stems))
 
             if is_city_match or is_district_match or is_oblast_match:
                 approach = item.get("approach") or {}

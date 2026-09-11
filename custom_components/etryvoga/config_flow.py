@@ -75,7 +75,10 @@ class ETryvogaConfigFlow(ConfigFlow, domain=DOMAIN):
         if len(district_slugs) == 1:
             slug = district_slugs[0]
             self.selected_district_slug = slug
-            self.selected_district_title = district_options[slug]
+            self.selected_district_title = district_options.get(slug, slug)
+            district_info = DISTRICTS_BY_SLUG.get(slug, {})
+            if district_info.get("isCity", False):
+                return await self.async_step_city_confirm()
             return await self.async_step_city()
 
         if user_input is not None:
@@ -160,8 +163,7 @@ class ETryvogaConfigFlow(ConfigFlow, domain=DOMAIN):
         # Populate available cities/towns in this district
         district_cities = DISTRICT_TO_CITIES.get(self.selected_district_slug, [])
         for c in district_cities:
-            label = f"м. {c}" if c in ("Запоріжжя", "Вільнянськ", "Бердянськ", "Мелітополь", "Пологи", "Василівка") else c
-            cities_options[c] = label
+            cities_options[c] = c
 
         if user_input is not None:
             chosen_city = user_input.get(CONF_CITY_NAME)
