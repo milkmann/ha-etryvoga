@@ -1,0 +1,95 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "eTryvoga: Select Oblast",
+        "description": "Select an oblast to monitor air alerts and tactical threats.",
+        "data": {
+          "oblast": "Oblast / Region"
+        }
+      },
+      "district": {
+        "title": "eTryvoga: Select District",
+        "description": "Select a district within the chosen oblast.",
+        "data": {
+          "district_slug": "District"
+        }
+      },
+      "city": {
+        "title": "eTryvoga: Settlement / City",
+        "description": "Select a specific town/settlement for pinpoint threat tracking, or monitor the entire district.",
+        "data": {
+          "city_name": "Settlement / City",
+          "include_neighbors": "Include threats across the wider oblast"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This region is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "eTryvoga Notification Settings",
+        "data": {
+          "include_neighbors": "Include threats across the wider oblast"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "air_alert": {
+        "name": "Air Raid Alert"
+      },
+      "kab_threat": {
+        "name": "Guided Bomb (KAB) Threat"
+      },
+      "drone_threat": {
+        "name": "UAV / Shahed Threat"
+      },
+      "missile_threat": {
+        "name": "Missile Danger"
+      },
+      "artillery_threat": {
+        "name": "Artillery Shelling Threat"
+      },
+      "recon_threat": {
+        "name": "Reconnaissance UAV"
+      },
+      "explosion_threat": {
+        "name": "Explosion Reported"
+      }
+    },
+    "sensor": {
+      "alert_level": {
+        "name": "Alert Level"
+      },
+      "tactical_summary": {
+        "name": "Tactical Summary"
+      },
+      "alert_duration": {
+        "name": "Alert Duration"
+      },
+      "active_threats_count": {
+        "name": "Active Threats Count"
+      }
+    },
+    "event": {
+      "threat_event": {
+        "name": "Threat Event",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "alarm_started": "Alarm Started",
+              "alarm_cancelled": "Alarm Cancelled",
+              "threat_detected": "Threat Detected",
+              "threat_cancelled": "Threat Cancelled"
+            }
+          }
+        }
+      }
+    }
+  }
+}

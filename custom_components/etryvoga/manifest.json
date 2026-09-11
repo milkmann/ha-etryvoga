@@ -1,0 +1,14 @@
+{
+  "domain": "etryvoga",
+  "name": "eTryvoga (єТривога)",
+  "codeowners": [
+    "@milkmann"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/milkmann/ha-etryvoga",
+  "integration_type": "service",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/milkmann/ha-etryvoga/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

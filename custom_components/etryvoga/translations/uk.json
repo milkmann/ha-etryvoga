@@ -1,0 +1,95 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "єТривога: Вибір області",
+        "description": "Оберіть область для моніторингу повітряних тривог та тактичних загроз.",
+        "data": {
+          "oblast": "Область"
+        }
+      },
+      "district": {
+        "title": "єТривога: Вибір району",
+        "description": "Оберіть район у вибраній області.",
+        "data": {
+          "district_slug": "Район"
+        }
+      },
+      "city": {
+        "title": "єТривога: Населений пункт",
+        "description": "Оберіть конкретне місто/селище для точкового відстеження підльотів КАБ та БПЛА, або залиште моніторинг всього району.",
+        "data": {
+          "city_name": "Населений пункт",
+          "include_neighbors": "Враховувати загрози в межах області"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Цей регіон вже налаштовано в системі."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Налаштування сповіщень єТривога",
+        "data": {
+          "include_neighbors": "Враховувати загрози в межах області"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "air_alert": {
+        "name": "Повітряна тривога"
+      },
+      "kab_threat": {
+        "name": "Загроза КАБ"
+      },
+      "drone_threat": {
+        "name": "Загроза БПЛА / Шахедів"
+      },
+      "missile_threat": {
+        "name": "Ракетна небезпека"
+      },
+      "artillery_threat": {
+        "name": "Загроза артобстрілу"
+      },
+      "recon_threat": {
+        "name": "Розвідувальний БПЛА"
+      },
+      "explosion_threat": {
+        "name": "Повідомлення про вибух"
+      }
+    },
+    "sensor": {
+      "alert_level": {
+        "name": "Рівень тривоги"
+      },
+      "tactical_summary": {
+        "name": "Тактичне зведення"
+      },
+      "alert_duration": {
+        "name": "Тривалість тривоги"
+      },
+      "active_threats_count": {
+        "name": "Кількість активних загроз"
+      }
+    },
+    "event": {
+      "threat_event": {
+        "name": "Подія загрози",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "alarm_started": "Початок тривоги",
+              "alarm_cancelled": "Відбій тривоги",
+              "threat_detected": "Виявлено загрозу",
+              "threat_cancelled": "Загрозу знято"
+            }
+          }
+        }
+      }
+    }
+  }
+}

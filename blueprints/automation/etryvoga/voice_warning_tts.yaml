@@ -1,0 +1,50 @@
+blueprint:
+  name: "єТривога: Голосове попередження про КАБ та ракети (TTS на колонки)"
+  description: "Озвучує через розумні колонки або медіаплеєри текст загрози (напрямок пуску КАБ, тип загрози) при надходженні тривоги."
+  domain: automation
+  input:
+    kab_binary_sensor:
+      name: "Сенсор загрози КАБ"
+      description: "Оберіть бінарний сенсор загрози КАБ"
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: etryvoga
+    summary_sensor:
+      name: "Сенсор тактичного зведення"
+      description: "Оберіть сенсор тактичного зведення (tactical_summary)"
+      selector:
+        entity:
+          domain: sensor
+          integration: etryvoga
+    media_players:
+      name: "Медіаплеєри / Колонки"
+      description: "Оберіть пристрої для відтворення звукового оповіщення"
+      selector:
+        target:
+          entity:
+            domain: media_player
+    tts_service:
+      name: "Служба TTS (Text-to-Speech)"
+      description: "Наприклад tts.google_en_com або tts.cloud_say"
+      selector:
+        action:
+
+trigger:
+  - platform: state
+    entity_id: !input kab_binary_sensor
+    to: "on"
+    id: "kab_alert"
+
+condition: []
+
+action:
+  - action: !input tts_service
+    target: !input media_players
+    data:
+      message: >
+        Увага! Зафіксовано загрозу керованих авіабомб!
+        {{ states(summary_sensor) }}.
+        Негайно перейдіть в безпечне місце або укриття!
+
+mode: single

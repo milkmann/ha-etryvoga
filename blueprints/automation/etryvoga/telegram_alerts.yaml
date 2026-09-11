@@ -1,0 +1,85 @@
+blueprint:
+  name: "єТривога: Детальні сповіщення в Telegram (КАБ, БПЛА, Ракети)"
+  description: "Надсилає миттєві сповіщення у Telegram при початку тривоги, виявленні КАБ/БПЛА та відбої із підрахунком тривалості."
+  domain: automation
+  input:
+    alert_binary_sensor:
+      name: "Сенсор повітряної тривоги"
+      description: "Оберіть бінарний сенсор повітряної тривоги єТривога"
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: etryvoga
+    summary_sensor:
+      name: "Сенсор тактичного зведення"
+      description: "Оберіть сенсор тактичного зведення (tactical_summary)"
+      selector:
+        entity:
+          domain: sensor
+          integration: etryvoga
+    notify_service:
+      name: "Служба сповіщення Telegram"
+      description: "Наприклад notify.telegram_bot або notify.telegram"
+      selector:
+        action:
+
+trigger:
+  - platform: state
+    entity_id: !input alert_binary_sensor
+    to: "on"
+    id: "alert_start"
+  - platform: state
+    entity_id: !input alert_binary_sensor
+    to: "off"
+    id: "alert_end"
+  - platform: state
+    entity_id: !input summary_sensor
+    id: "summary_update"
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "alert_start"
+        sequence:
+          - action: !input notify_service
+            data:
+              message: >
+                🔴 <b>УВАГА! ПОВІТРЯНА ТРИВОГА!</b>
+                
+                📍 <b>Регіон:</b> {{ state_attr(trigger.entity_id, 'region') }} ({{ state_attr(trigger.entity_id, 'oblast') }})
+                🕒 <b>Час початку:</b> {{ now().strftime('%H:%M:%S') }}
+                
+                🛡️ <i>Негайно прямуйте в найближче укриття!</i>
+
+      - conditions:
+          - condition: trigger
+            id: "alert_end"
+        sequence:
+          - action: !input notify_service
+            data:
+              message: >
+                🟢 <b>ВІДБІЙ ПОВІТРЯНОЇ ТРИВОГИ</b>
+                
+                📍 <b>Регіон:</b> {{ state_attr(trigger.entity_id, 'region') }}
+                ⏱️ <b>Тривалість:</b> {{ state_attr(trigger.entity_id, 'duration_minutes') | default('0') }} хв.
+                🕒 <b>Час відбою:</b> {{ now().strftime('%H:%M:%S') }}
+
+      - conditions:
+          - condition: trigger
+            id: "summary_update"
+          - condition: template
+            value_template: "{{ states(trigger.entity_id) not in ['unknown', 'unavailable', 'Обстановка спокійна. Тривоги немає.'] }}"
+        sequence:
+          - action: !input notify_service
+            data:
+              message: >
+                ⚠️ <b>ОПЕРАТИВНА ОБСТАНОВКА (єТривога)</b>
+                
+                {{ states(trigger.entity_id) }}
+                🕒 <i>{{ now().strftime('%H:%M:%S') }}</i>
+
+mode: queued
+max: 5

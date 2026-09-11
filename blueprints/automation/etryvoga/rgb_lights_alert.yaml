@@ -1,0 +1,66 @@
+blueprint:
+  name: "єТривога: Світлове сповіщення розумного будинку (RGB лампи / LED стрічки)"
+  description: "Змінює колір підсвічування в будинку: Жовтий при загрозі дронів, Червоний при ракетній/КАБ тривозі, Зелений при відбої."
+  domain: automation
+  input:
+    alert_level_sensor:
+      name: "Сенсор рівня тривоги (alert_level)"
+      description: "Сенсор alert_level від інтеграції єТривога"
+      selector:
+        entity:
+          domain: sensor
+          integration: etryvoga
+    target_lights:
+      name: "Світильники / LED стрічки"
+      description: "Оберіть RGB-лампи або групи світла для сигналізації"
+      selector:
+        target:
+          entity:
+            domain: light
+
+trigger:
+  - platform: state
+    entity_id: !input alert_level_sensor
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input alert_level_sensor
+            state: "red"
+        sequence:
+          - action: light.turn_on
+            target: !input target_lights
+            data:
+              rgb_color: [220, 38, 38]
+              brightness_pct: 100
+
+      - conditions:
+          - condition: state
+            entity_id: !input alert_level_sensor
+            state: "yellow"
+        sequence:
+          - action: light.turn_on
+            target: !input target_lights
+            data:
+              rgb_color: [234, 179, 8]
+              brightness_pct: 80
+
+      - conditions:
+          - condition: state
+            entity_id: !input alert_level_sensor
+            state: "clear"
+        sequence:
+          - action: light.turn_on
+            target: !input target_lights
+            data:
+              rgb_color: [16, 185, 129]
+              brightness_pct: 60
+          - delay:
+              seconds: 15
+          - action: light.turn_off
+            target: !input target_lights
+
+mode: restart
