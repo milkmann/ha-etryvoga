@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
@@ -66,3 +68,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ETryvogaConfigEntry) ->
 async def async_reload_entry(hass: HomeAssistant, entry: ETryvogaConfigEntry) -> None:
     """Reload config entry when options change."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ETryvogaConfigEntry, device_entry: Any
+) -> bool:
+    """Allow removing old/orphaned devices from the config entry."""
+    return True

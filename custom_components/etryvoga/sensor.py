@@ -89,7 +89,7 @@ async def async_setup_entry(
     try:
         overview_sensor = ETryvogaUkraineOverviewSensor(coordinator, entry)
         entities.append(overview_sensor)
-        _LOGGER.warning(
+        _LOGGER.debug(
             "ETRYVOGA SENSOR SETUP: Added %d entities, overview entity unique_id: %s",
             len(entities),
             overview_sensor.unique_id,
@@ -163,7 +163,7 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
     _attr_name = "єТривога: Вся Україна (Карта загроз)"
     _attr_attribution = ATTRIBUTION
     _attr_icon = "mdi:map-legend"
-    _attr_unique_id = "etryvoga_ukraine_overview"
+    _attr_entity_registry_enabled_default = False
 
     def __init__(
         self,
@@ -176,12 +176,14 @@ class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordina
             key="ukraine_overview",
             name="єТривога: Вся Україна (Карта загроз)",
             icon="mdi:map-legend",
+            entity_registry_enabled_default=False,
         )
+        self._attr_unique_id = f"{entry.unique_id}_ukraine_overview".lower()
         self._attr_device_info = DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
-            identifiers={(DOMAIN, "ukraine_overview_service")},
+            identifiers={(DOMAIN, entry.entry_id)},
             manufacturer=MANUFACTURER,
-            name="єТривога (Вся Україна)",
+            name=entry.title,
             configuration_url="https://map.etryvoga.com",
         )
 
