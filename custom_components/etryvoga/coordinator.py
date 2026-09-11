@@ -341,7 +341,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def _build_country_overview(
         self, alerts_payload: dict[str, Any], confirmed_items: list[dict[str, Any]]
     ) -> dict[str, Any]:
-        """Aggregate country-wide status for LED matrices (JAAM/AWTRIX/Ulanzi) and custom maps."""
+        """Aggregate country-wide status for LED matrices (AWTRIX/Ulanzi) and custom maps."""
         districts = alerts_payload.get("districts", [])
         districts_by_slug = {d.get("slug"): d for d in districts if d.get("slug")}
 
@@ -400,7 +400,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             sirens_districts_count += len(active_dstrs)
             is_siren = len(active_dstrs) > 0
 
-            # JAAM Bitmask calculation
+            # Bitmask calculation for LED maps
             flags = 0
             if is_siren:
                 sirens_oblasts_count += 1

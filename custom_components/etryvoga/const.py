@@ -59,7 +59,7 @@ EVENT_ALARM_CANCELLED = "alarm_cancelled"
 EVENT_THREAT_DETECTED = "threat_detected"
 EVENT_THREAT_CANCELLED = "threat_cancelled"
 
-# JAAM Protocol Bitmasks (ws://ws.jaam.net.ua:80/data_fusion_v1)
+# Tactical Threat Bitmasks for LED Maps and Microcontrollers
 BIT_AIR = 1 << 0          # 1: Air raid alert
 BIT_ARTILLERY = 1 << 1    # 2: Artillery shelling
 BIT_URBAN_FIGHTS = 1 << 2 # 4: Urban combats
