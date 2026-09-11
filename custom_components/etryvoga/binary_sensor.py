@@ -81,7 +81,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ETryvogaBinarySensorDescription, ...] = (
         key="explosion_threat",
         translation_key="explosion_threat",
         device_class=BinarySensorDeviceClass.SAFETY,
-        icon="mdi:explosion",
+        icon="mdi:fire-alert",
         is_threat_key=THREAT_EXPLOSION,
     ),
 )
