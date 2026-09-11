@@ -62,13 +62,6 @@ SENSOR_DESCRIPTIONS: tuple[ETryvogaSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_key="active_threats_count",
     ),
-    ETryvogaSensorDescription(
-        key="ukraine_overview",
-        translation_key="ukraine_overview",
-        icon="mdi:map-legend",
-        value_key="country_overview_summary",
-        entity_registry_enabled_default=False,
-    ),
 )
 
 
@@ -80,18 +73,21 @@ async def async_setup_entry(
     """Set up sensors for eTryvoga."""
     coordinator = entry.runtime_data
 
-    async_add_entities(
+    entities: list[SensorEntity] = [
         ETryvogaSensor(
             coordinator=coordinator,
             description=description,
             entry=entry,
         )
         for description in SENSOR_DESCRIPTIONS
-    )
+    ]
+    entities.append(ETryvogaUkraineOverviewSensor(coordinator, entry))
+
+    async_add_entities(entities)
 
 
 class ETryvogaSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEntity):
-    """Representation of an eTryvoga sensor."""
+    """Representation of an eTryvoga local city/district sensor."""
 
     entity_description: ETryvogaSensorDescription
     _attr_has_entity_name = True
@@ -143,12 +139,50 @@ class ETryvogaSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEnt
         elif self.entity_description.key == "active_threats_count":
             attrs["threats"] = data.get("threats", [])
 
-        elif self.entity_description.key == "ukraine_overview":
-            country = data.get("country_overview") or {}
-            attrs["regions_status"] = country.get("regions_status", {})
-            attrs["oblasts"] = country.get("oblasts", {})
-            attrs["districts"] = country.get("districts", {})
-            attrs["tactical_threats"] = country.get("tactical_threats", [])
-            attrs["counts"] = country.get("counts", {})
-
         return attrs
+
+
+class ETryvogaUkraineOverviewSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEntity):
+    """Nationwide tactical overview sensor for LED matrices (AWTRIX) and maps."""
+
+    _attr_has_entity_name = False
+    _attr_attribution = ATTRIBUTION
+    _attr_icon = "mdi:map-legend"
+    _attr_translation_key = "ukraine_overview"
+    _attr_entity_registry_enabled_default = False
+
+    def __init__(
+        self,
+        coordinator: ETryvogaDataUpdateCoordinator,
+        entry: ETryvogaConfigEntry,
+    ) -> None:
+        """Initialize the nationwide overview sensor."""
+        super().__init__(coordinator)
+        self._attr_unique_id = "etryvoga_ukraine_overview"
+        self.suggested_object_id = "etryvoga_ukraine_overview"
+        self._attr_device_info = DeviceInfo(
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={(DOMAIN, entry.entry_id)},
+            manufacturer=MANUFACTURER,
+            name=entry.title,
+            configuration_url="https://map.etryvoga.com",
+        )
+
+    @property
+    def native_value(self) -> Any:
+        """Return the nationwide summary state."""
+        data = self.coordinator.data or {}
+        return data.get("country_overview_summary", "Спокійно")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return nationwide tactical attributes."""
+        data = self.coordinator.data or {}
+        country = data.get("country_overview") or {}
+        return {
+            "regions_status": country.get("regions_status", {}),
+            "oblasts": country.get("oblasts", {}),
+            "districts": country.get("districts", {}),
+            "tactical_threats": country.get("tactical_threats", []),
+            "counts": country.get("counts", {}),
+        }
