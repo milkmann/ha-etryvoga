@@ -19,7 +19,7 @@ API_LIVE_SSE_URL = f"{API_BASE_URL}/api/map/live"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HomeAssistant-eTryvoga/0.1.0"
 
 # Timing
-DEFAULT_SCAN_INTERVAL = timedelta(minutes=5)
+DEFAULT_SCAN_INTERVAL = timedelta(seconds=20)
 SSE_RECONNECT_INITIAL_BACKOFF = 2
 SSE_RECONNECT_MAX_BACKOFF = 60
 

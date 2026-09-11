@@ -143,18 +143,29 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     backoff = min(backoff * 2, 60)
 
     def _handle_live_payload(self, live_data: dict[str, Any]) -> None:
-        """Merge live SSE stories into state and push updates to entities."""
-        # Collect stories from live stream categories
+        """Merge live SSE stories and district alerts into state and push updates to entities."""
+        # 1. Update districts cache if present in live SSE snapshot
+        new_districts = live_data.get("districts")
+        if isinstance(new_districts, list) and new_districts:
+            self._raw_alerts_cache["districts"] = new_districts
+
+        # 2. Collect stories from live stream categories
         new_confirmed: list[dict[str, Any]] = []
-        for key in ("kabStories", "droneStories", "rocketStories", "shellingStories", "reconStories", "explosionStories"):
+        for key in ("uavStories", "droneStories", "kabStories", "rocketStories", "shellingStories", "reconStories", "explosionStories"):
             stories = live_data.get(key, [])
             if isinstance(stories, list):
                 new_confirmed.extend(stories)
 
+        # Fallback to top-level stories if categorized lists were empty
+        if not new_confirmed:
+            general_stories = live_data.get("stories", [])
+            if isinstance(general_stories, list):
+                new_confirmed.extend(general_stories)
+
         if new_confirmed:
             self._raw_confirmed_cache = new_confirmed
 
-        # Re-aggregate state
+        # 3. Re-aggregate state immediately with live data
         new_state = self._aggregate_state(self._raw_alerts_cache, self._raw_confirmed_cache)
         self.async_set_updated_data(new_state)
 
