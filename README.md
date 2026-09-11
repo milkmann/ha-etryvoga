@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <b>🇺🇦 Українська</b> &nbsp;|&nbsp; <a href="README.en.md">🇬🇧 English</a>
+</p>
+
+<p align="center">
   <a href="https://github.com/hacs/default"><img src="https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge" alt="HACS Custom" /></a>
   <a href="https://github.com/milkmann/ha-etryvoga/releases"><img src="https://img.shields.io/github/v/release/milkmann/ha-etryvoga?style=for-the-badge&color=blue" alt="Latest Release" /></a>
   <a href="https://github.com/home-assistant/core"><img src="https://img.shields.io/badge/Home%20Assistant-2024.1%2B-blue?style=for-the-badge&logo=home-assistant" alt="Home Assistant" /></a>
@@ -115,6 +119,12 @@
 
 > [!IMPORTANT]
 > Ця інтеграція є додатковим засобом інформування для систем автоматизації оселі. Завжди зважайте на офіційні сигнали цивільного захисту, телеграм-канал Повітряних Сил ЗСУ та сигнали вуличних сирен.
+
+---
+
+## 🇬🇧 English Documentation
+
+Looking for documentation in English? Full setup guides, entity mappings, and blueprints documentation are available in [**README.en.md**](README.en.md).
 
 ---
 
