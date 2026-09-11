@@ -97,6 +97,10 @@ class ETryvogaConfigFlow(ConfigFlow, domain=DOMAIN):
 
             self.selected_district_slug = chosen
             self.selected_district_title = district_options.get(chosen, chosen)
+            district_info = DISTRICTS_BY_SLUG.get(chosen, {})
+            if district_info.get("isCity", False):
+                return await self.async_step_city_confirm()
+
             return await self.async_step_city()
 
         schema = vol.Schema({
@@ -108,43 +112,70 @@ class ETryvogaConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=schema,
         )
 
+    async def async_step_city_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Step 3 (for standalone cities): Confirm city monitoring settings."""
+        district_info = DISTRICTS_BY_SLUG.get(self.selected_district_slug, {})
+        raw_title = district_info.get("rawTitle", self.selected_district_title)
+
+        if user_input is not None:
+            city_name = raw_title
+            unique_id = f"{self.selected_district_slug}_{city_name}"
+            await self.async_set_unique_id(unique_id)
+            self._abort_if_unique_id_configured()
+
+            title = raw_title if raw_title.startswith("м. ") else f"м. {raw_title}"
+            return self.async_create_entry(
+                title=title,
+                data={
+                    CONF_OBLAST: self.selected_oblast,
+                    CONF_DISTRICT_SLUG: self.selected_district_slug,
+                    CONF_CITY_NAME: city_name,
+                    CONF_INCLUDE_NEIGHBORS: user_input.get(CONF_INCLUDE_NEIGHBORS, True),
+                },
+            )
+
+        schema = vol.Schema({
+            vol.Optional(CONF_INCLUDE_NEIGHBORS, default=True): bool,
+        })
+
+        return self.async_show_form(
+            step_id="city_confirm",
+            data_schema=schema,
+            description_placeholders={"city_name": raw_title},
+        )
+
     async def async_step_city(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Step 3: Choose specific city/settlement or entire district."""
+        """Step 3 (for districts): Choose specific settlement or entire district."""
         district_info = DISTRICTS_BY_SLUG.get(self.selected_district_slug, {})
-        is_city_entry = district_info.get("isCity", False)
         raw_title = district_info.get("rawTitle", self.selected_district_title)
 
-        cities_options: dict[str, str] = {}
-        if is_city_entry:
-            cities_options["_ALL_"] = f"{raw_title} (все місто)"
-        else:
-            cities_options["_ALL_"] = "Весь район цілком (всі населені пункти)"
+        cities_options: dict[str, str] = {
+            "_ALL_": f"{self.selected_district_title} (весь район цілком)"
+        }
 
-        # Populate available cities in this district
+        # Populate available cities/towns in this district
         district_cities = DISTRICT_TO_CITIES.get(self.selected_district_slug, [])
         for c in district_cities:
-            cities_options[c] = c
+            label = f"м. {c}" if c in ("Запоріжжя", "Вільнянськ", "Бердянськ", "Мелітополь", "Пологи", "Василівка") else c
+            cities_options[c] = label
 
         if user_input is not None:
             chosen_city = user_input.get(CONF_CITY_NAME)
             city_name = None if chosen_city == "_ALL_" else chosen_city
-
-            if is_city_entry and city_name is None:
-                city_name = raw_title
 
             # Ensure unique entry
             unique_id = f"{self.selected_district_slug}_{city_name or 'district'}"
             await self.async_set_unique_id(unique_id)
             self._abort_if_unique_id_configured()
 
-            if is_city_entry:
-                title = raw_title if raw_title.startswith("м. ") else f"м. {raw_title}"
+            if city_name:
+                title = f"м. {city_name}" if city_name == raw_title else f"{city_name} ({self.selected_district_title})"
             else:
                 title = f"{self.selected_district_title}"
-                if city_name:
-                    title += f" ({city_name})"
 
             return self.async_create_entry(
                 title=title,
