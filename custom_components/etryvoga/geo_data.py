@@ -1321,11 +1321,18 @@ DISTRICT_TO_CITIES = {
     "Городок",
     "Львів"
   ],
-  "CHERVONOGRADSKYI-DSTR": [],
+  "CHERVONOGRADSKYI-DSTR": [
+    "Сокаль",
+    "Червоноград",
+    "Шептицький"
+  ],
   "YAVORIVSKYI-DSTR": [
     "Яворів"
   ],
-  "VOLODIMIR-VOLINSKYI-DSTR": [],
+  "VOLODIMIR-VOLINSKYI-DSTR": [
+    "Володимир",
+    "Нововолинськ"
+  ],
   "KAMIN-KASHIRSKYI-DSTR": [
     "Камінь-Каширський",
     "Любешів",
@@ -1444,7 +1451,8 @@ DISTRICT_TO_CITIES = {
     "Яремче"
   ],
   "KAMIANETS-PODILSKYI-DSTR": [
-    "Кам'Янець-Подільський"
+    "Кам'Янець-Подільський",
+    "Кам'янець-Подільський"
   ],
   "KHMELNYTSKYI-DSTR": [
     "Адампіль",
@@ -1502,7 +1510,10 @@ DISTRICT_TO_CITIES = {
     "Овруч",
     "Олевськ"
   ],
-  "NOVOHRAD-VOLYNSKYI-DSTR": [],
+  "NOVOHRAD-VOLYNSKYI-DSTR": [
+    "Звягель",
+    "Новоград-Волинський"
+  ],
   "BILOTSERKIVSKYI-DSTR": [
     "Біла",
     "Біла Церква",
@@ -1796,7 +1807,11 @@ DISTRICT_TO_CITIES = {
     "Томаківка",
     "Червоногригорівка"
   ],
-  "NOVOMOSKOVSKYI-DSTR": [],
+  "NOVOMOSKOVSKYI-DSTR": [
+    "Новомосковськ",
+    "Перещепине",
+    "Самар"
+  ],
   "PAVLOHRADSKYI-DSTR": [
     "Павлоград",
     "Юріївка"
@@ -1982,7 +1997,11 @@ DISTRICT_TO_CITIES = {
     "Барвінкове",
     "Борова"
   ],
-  "KRASNOHRADSKYI-DSTR": [],
+  "KRASNOHRADSKYI-DSTR": [
+    "Берестин",
+    "Красноград",
+    "Сахновщина"
+  ],
   "KUPIANSKYI-DSTR": [
     "Великий",
     "Великий Бурлук",
@@ -2051,7 +2070,10 @@ DISTRICT_TO_CITIES = {
     "Макіївка",
     "Харцизьк"
   ],
-  "KALMIUSKYI-DSTR": [],
+  "KALMIUSKYI-DSTR": [
+    "Кальміуське",
+    "Новоазовськ"
+  ],
   "KRAMATORSKYI-DSTR": [
     "Билбасівка",
     "Дружківка",
@@ -2087,8 +2109,15 @@ DISTRICT_TO_CITIES = {
   "LUHANSKYI-DSTR": [
     "Луганськ"
   ],
-  "SVATIVSKYI-DSTR": [],
-  "SIEVIERODONETSKYI-DSTR": [],
+  "SVATIVSKYI-DSTR": [
+    "Сватове"
+  ],
+  "SIEVIERODONETSKYI-DSTR": [
+    "Лисичанськ",
+    "Рубіжне",
+    "Сєвєродонецьк",
+    "Сіверськодонецьк"
+  ],
   "STAROBILSKYI-DSTR": [
     "Старобільськ"
   ],
@@ -2110,7 +2139,9 @@ DISTRICT_TO_CITIES = {
   "KERCHENSKYI-DSTR": [
     "Керч"
   ],
-  "KIYEW": [],
+  "KIYEW": [
+    "Київ"
+  ],
   "KHARKIV-CITY": [
     "Харків"
   ],
