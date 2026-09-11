@@ -62,6 +62,13 @@ SENSOR_DESCRIPTIONS: tuple[ETryvogaSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_key="active_threats_count",
     ),
+    ETryvogaSensorDescription(
+        key="ukraine_overview",
+        translation_key="ukraine_overview",
+        icon="mdi:map-legend",
+        value_key="country_overview_summary",
+        entity_registry_enabled_default=False,
+    ),
 )
 
 
@@ -135,5 +142,13 @@ class ETryvogaSensor(CoordinatorEntity[ETryvogaDataUpdateCoordinator], SensorEnt
 
         elif self.entity_description.key == "active_threats_count":
             attrs["threats"] = data.get("threats", [])
+
+        elif self.entity_description.key == "ukraine_overview":
+            country = data.get("country_overview") or {}
+            attrs["regions_status"] = country.get("regions_status", {})
+            attrs["oblasts"] = country.get("oblasts", {})
+            attrs["districts"] = country.get("districts", {})
+            attrs["tactical_threats"] = country.get("tactical_threats", [])
+            attrs["counts"] = country.get("counts", {})
 
         return attrs

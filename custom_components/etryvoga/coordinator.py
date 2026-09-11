@@ -34,7 +34,7 @@ from .const import (
     THREAT_SHELLING,
     USER_AGENT,
 )
-from .geo_data import DISTRICTS_BY_SLUG, OBLAST_TO_DISTRICTS
+from .geo_data import DISTRICTS_BY_SLUG, OBLAST_REGIONS, OBLAST_TO_DISTRICTS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -310,6 +310,8 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "payload": {"district": self.district_title, "threats": relevant_threats, "summary": tactical_summary},
             }
 
+        country_overview = self._build_country_overview(alerts_payload, confirmed_items)
+
         return {
             "is_siren": is_siren,
             "alert_level": alert_level,
@@ -318,8 +320,154 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "threats": relevant_threats,
             "threat_flags": threat_flags,
             "tactical_summary": tactical_summary,
+            "country_overview": country_overview,
+            "country_overview_summary": country_overview["summary"],
             "last_event": event_trigger,
             "updated_at": now.isoformat(),
+        }
+
+    def _build_country_overview(
+        self, alerts_payload: dict[str, Any], confirmed_items: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """Aggregate country-wide status for LED matrices, AWTRIX, and custom maps."""
+        districts = alerts_payload.get("districts", [])
+        districts_by_slug = {d.get("slug"): d for d in districts if d.get("slug")}
+
+        regions_status: dict[str, str] = {}
+        oblasts_data: dict[str, Any] = {}
+        sirens_districts_count = 0
+        sirens_oblasts_count = 0
+
+        for obl in OBLAST_REGIONS:
+            slugs = OBLAST_TO_DISTRICTS.get(obl, [])
+            obl_districts = [districts_by_slug[s] for s in slugs if s in districts_by_slug]
+
+            active_dstrs = [d for d in obl_districts if d.get("status") == STATUS_SIREN]
+            sirens_districts_count += len(active_dstrs)
+
+            if active_dstrs:
+                sirens_oblasts_count += 1
+                is_red = any(d.get("alertLevel") == "red" for d in active_dstrs)
+                obl_level = LEVEL_RED if is_red else LEVEL_YELLOW
+                obl_status = STATUS_SIREN
+            else:
+                obl_level = LEVEL_CLEAR
+                obl_status = LEVEL_CLEAR
+
+            oblasts_data[obl] = {
+                "status": obl_status,
+                "level": obl_level,
+                "active_districts": len(active_dstrs),
+                "total_districts": len(obl_districts),
+                "siren_districts": [d.get("title") for d in active_dstrs if d.get("title")],
+            }
+
+            # Map multiple key variants for flexible Jinja2 / AWTRIX templates
+            regions_status[obl] = obl_level
+            short = obl.replace(" область", "")
+            regions_status[short] = obl_level
+            if short == "м. Київ":
+                regions_status["Київ"] = obl_level
+            elif short == "АР Крим":
+                regions_status["Крим"] = obl_level
+
+        # Extra city units like Sevastopol
+        if "SEVASTOPOL-CITY" in districts_by_slug:
+            sev = districts_by_slug["SEVASTOPOL-CITY"]
+            sev_lvl = LEVEL_RED if sev.get("status") == STATUS_SIREN else LEVEL_CLEAR
+            regions_status["м. Севастополь"] = sev_lvl
+            regions_status["Севастополь"] = sev_lvl
+
+        # Format tactical threats
+        tactical_threats = []
+        drones_cnt = 0
+        kabs_cnt = 0
+        missiles_cnt = 0
+        recon_cnt = 0
+        shelling_cnt = 0
+        explosions_cnt = 0
+
+        for t in confirmed_items:
+            ttype = t.get("type", "")
+            if ttype in ("drone", "uav", "shahed"):
+                drones_cnt += 1
+            elif ttype in ("kab", "fab"):
+                kabs_cnt += 1
+            elif ttype in ("rocket", "missile", "ballistic"):
+                missiles_cnt += 1
+            elif ttype in ("recon", "zala", "supercam"):
+                recon_cnt += 1
+            elif ttype in ("artillery", "shelling"):
+                shelling_cnt += 1
+            elif ttype in ("explosion",):
+                explosions_cnt += 1
+
+            appr = t.get("approach") or {}
+            origin = appr.get("origin_title", "")
+            direction = appr.get("cardinal", "")
+
+            tactical_threats.append({
+                "type": ttype,
+                "title": t.get("title", ""),
+                "region": t.get("region", ""),
+                "origin": origin,
+                "direction": direction,
+                "time": t.get("createdAtParsed", ""),
+                "body": t.get("body", ""),
+            })
+
+        counts = {
+            "total_threats": len(confirmed_items),
+            "drones": drones_cnt,
+            "kabs": kabs_cnt,
+            "missiles": missiles_cnt,
+            "recon": recon_cnt,
+            "shelling": shelling_cnt,
+            "explosions": explosions_cnt,
+            "sirens_districts": sirens_districts_count,
+            "sirens_oblasts": sirens_oblasts_count,
+        }
+
+        # Build readable state string
+        parts = []
+        if len(confirmed_items) > 0:
+            threat_parts = []
+            if drones_cnt > 0:
+                threat_parts.append(f"{drones_cnt} БПЛА")
+            if kabs_cnt > 0:
+                threat_parts.append(f"{kabs_cnt} КАБ")
+            if missiles_cnt > 0:
+                threat_parts.append(f"{missiles_cnt} ракет")
+            parts.append(f"{len(confirmed_items)} загроз ({', '.join(threat_parts)})")
+        else:
+            parts.append("Загроз немає")
+
+        if sirens_districts_count > 0:
+            parts.append(f"{sirens_districts_count} тривог ({sirens_oblasts_count} обл.)")
+        else:
+            parts.append("Тривог немає")
+
+        summary = " | ".join(parts)
+
+        # Build districts dictionary (slug -> {title, status, level, status_at})
+        districts_dict = {}
+        for d in districts:
+            slug = d.get("slug")
+            if slug:
+                districts_dict[slug] = {
+                    "title": d.get("title", ""),
+                    "status": d.get("status", "clear"),
+                    "level": d.get("alertLevel") or ("red" if d.get("status") == STATUS_SIREN else "clear"),
+                    "status_at": d.get("statusAt"),
+                }
+
+        return {
+            "summary": summary,
+            "regions_status": regions_status,
+            "oblasts": oblasts_data,
+            "districts": districts_dict,
+            "tactical_threats": tactical_threats,
+            "counts": counts,
         }
 
     def _build_tactical_summary(self, is_siren: bool, alert_level: str, threats: list[dict[str, Any]]) -> str:

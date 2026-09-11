@@ -81,6 +81,9 @@
       },
       "active_threats_count": {
         "name": "Кількість активних загроз"
+      },
+      "ukraine_overview": {
+        "name": "Вся Україна (Карта загроз)"
       }
     },
     "event": {

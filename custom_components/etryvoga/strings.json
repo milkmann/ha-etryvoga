@@ -81,6 +81,9 @@
       },
       "active_threats_count": {
         "name": "Active Threats Count"
+      },
+      "ukraine_overview": {
+        "name": "Ukraine Map & Tactical Overview"
       }
     },
     "event": {
