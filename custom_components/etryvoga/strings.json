@@ -2,38 +2,38 @@
   "config": {
     "step": {
       "user": {
-        "title": "єТривога: Вибір області",
-        "description": "Оберіть область для моніторингу повітряних тривог та тактичних загроз.",
+        "title": "eTryvoga: Select Oblast",
+        "description": "Select an oblast (region) to monitor for air raid alarms and tactical threats.",
         "data": {
-          "oblast": "Область"
+          "oblast": "Oblast / Region"
         }
       },
       "district": {
-        "title": "єТривога: Вибір району",
-        "description": "Оберіть район у вибраній області.",
+        "title": "eTryvoga: Select District or City",
+        "description": "Select a district or city of oblast significance within the chosen oblast.",
         "data": {
-          "district_slug": "Район"
+          "district_slug": "District / City"
         }
       },
       "city": {
-        "title": "єТривога: Населений пункт",
-        "description": "Оберіть конкретне місто/селище для точкового відстеження підльотів КАБ та БПЛА, або залиште моніторинг всього району.",
+        "title": "eTryvoga: Settlement / Town",
+        "description": "Select a specific town/settlement for pinpoint threat tracking, or monitor the entire district.",
         "data": {
-          "city_name": "Населений пункт",
-          "include_neighbors": "Враховувати загрози в межах області"
+          "city_name": "Settlement / Town",
+          "include_neighbors": "Include threats across the wider oblast"
         }
       }
     },
     "abort": {
-      "already_configured": "Цей регіон вже налаштовано в системі."
+      "already_configured": "This region has already been configured."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Налаштування сповіщень єТривога",
+        "title": "eTryvoga Alert Options",
         "data": {
-          "include_neighbors": "Враховувати загрози в межах області"
+          "include_neighbors": "Include threats across the wider oblast"
         }
       }
     }
@@ -41,51 +41,51 @@
   "entity": {
     "binary_sensor": {
       "air_alert": {
-        "name": "Повітряна тривога"
+        "name": "Air Raid Alert"
       },
       "kab_threat": {
-        "name": "Загроза КАБ"
+        "name": "Guided Bomb (KAB) Threat"
       },
       "drone_threat": {
-        "name": "Загроза БПЛА / Шахедів"
+        "name": "UAV / Shahed Threat"
       },
       "missile_threat": {
-        "name": "Ракетна небезпека"
+        "name": "Missile Danger"
       },
       "artillery_threat": {
-        "name": "Загроза артобстрілу"
+        "name": "Artillery Shelling Threat"
       },
       "recon_threat": {
-        "name": "Розвідувальний БПЛА"
+        "name": "Reconnaissance UAV"
       },
       "explosion_threat": {
-        "name": "Повідомлення про вибух"
+        "name": "Explosion Reported"
       }
     },
     "sensor": {
       "alert_level": {
-        "name": "Рівень тривоги"
+        "name": "Alert Level"
       },
       "tactical_summary": {
-        "name": "Тактичне зведення"
+        "name": "Tactical Summary"
       },
       "alert_duration": {
-        "name": "Тривалість тривоги"
+        "name": "Alert Duration"
       },
       "active_threats_count": {
-        "name": "Кількість активних загроз"
+        "name": "Active Threats Count"
       }
     },
     "event": {
       "threat_event": {
-        "name": "Подія загрози",
+        "name": "Threat Event",
         "state_attributes": {
           "event_type": {
             "state": {
-              "alarm_started": "Початок тривоги",
-              "alarm_cancelled": "Відбій тривоги",
-              "threat_detected": "Виявлено загрозу",
-              "threat_cancelled": "Загрозу знято"
+              "alarm_started": "Alarm Started",
+              "alarm_cancelled": "Alarm Cancelled",
+              "threat_detected": "Threat Detected",
+              "threat_cancelled": "Threat Cancelled"
             }
           }
         }

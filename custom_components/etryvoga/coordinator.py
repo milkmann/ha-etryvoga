@@ -211,7 +211,15 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         relevant_threats = []
         oblast_keywords = [w.lower() for w in self.oblast.split() if len(w) > 3]
         district_keywords = [w.lower() for w in self.district_title.split() if len(w) > 3]
-        city_keyword = self.city_name.lower() if self.city_name else None
+        city_keyword = None
+        city_stem = None
+        if self.city_name:
+            clean = self.city_name.lower()
+            for prefix in ("м. ", "смт ", "с. ", "місто "):
+                if clean.startswith(prefix):
+                    clean = clean[len(prefix):]
+            city_keyword = clean.strip()
+            city_stem = city_keyword[:len(city_keyword)-2] if len(city_keyword) > 5 else city_keyword[:4]
 
         for item in confirmed_items:
             title = item.get("title", "")
@@ -219,7 +227,10 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             body_lower = item.get("body", "").lower()
 
             # Check if threat affects our city, district, or oblast
-            is_city_match = city_keyword and (city_keyword in title_lower or city_keyword in body_lower)
+            is_city_match = bool(
+                (city_keyword and (city_keyword in title_lower or city_keyword in body_lower))
+                or (city_stem and (city_stem in title_lower or city_stem in body_lower))
+            )
             is_district_match = any(dk in title_lower for dk in district_keywords)
             is_oblast_match = self.include_neighbors and any(ok in title_lower for ok in oblast_keywords)
 

@@ -30,96 +30,6 @@ OBLAST_REGIONS = [
 ]
 
 OBLAST_TO_DISTRICTS = {
-  "Одеська область": [
-    "ODESKYI-DSTR",
-    "KAMIANETS-PODILSKYI-DSTR",
-    "BEREZIVSKYI-DSTR",
-    "BILHOROD-DNISTROVSKYI-DSTR",
-    "IZMAILSKYI-DSTR",
-    "PODILSKYI-DSTR",
-    "ROZDILNIANSKYI-DSTR",
-    "BOLHRADSKYI-DSTR"
-  ],
-  "Сумська область": [
-    "SUMSKYI-DSTR",
-    "KONOTOPSKYI-DSTR",
-    "OKHTYRSKYI-DSTR",
-    "ROMENSKYI-DSTR",
-    "SHOSTKYNSKYI-DSTR"
-  ],
-  "Львівська область": [
-    "DROGOBICKYI-DSTR",
-    "SAMBIRSKYI-DSTR",
-    "ZOLOCHIVSKYI-DSTR",
-    "STRIJSKYI-DSTR",
-    "LVIVSKYI-DSTR",
-    "CHERVONOGRADSKYI-DSTR",
-    "YAVORIVSKYI-DSTR"
-  ],
-  "Волинська область": [
-    "VOLODIMIR-VOLINSKYI-DSTR",
-    "KAMIN-KASHIRSKYI-DSTR",
-    "KOVELSKYI-DSTR",
-    "LUCKYI-DSTR",
-    "PRYLUTSKYI-DSTR"
-  ],
-  "Тернопільська область": [
-    "KREMENECKYI-DSTR",
-    "TERNOPILSKYI-DSTR",
-    "CHORTKIVSKYI-DSTR"
-  ],
-  "Рівненська область": [
-    "VARASKYI-DSTR",
-    "DUBENSKYI-DSTR",
-    "RIVNENSKYI-DSTR",
-    "SARNENSKYI-DSTR"
-  ],
-  "Закарпатська область": [
-    "BEREHIVSKYI-DSTR",
-    "MUKACHIVSKYI-DSTR",
-    "RAKHIVSKYI-DSTR",
-    "TIACHIVSKYI-DSTR",
-    "UZHHORODSKYI-DSTR",
-    "KHUSTSKYI-DSTR"
-  ],
-  "Івано-Франківська область": [
-    "VERKHOVYNSKYI-DSTR",
-    "IVANO-FRANKIVSKYI-DSTR",
-    "KALUSKYI-DSTR",
-    "KOLOMYISKYI-DSTR",
-    "KOSIVSKYI-DSTR",
-    "NADVIRNIANSKYI-DSTR"
-  ],
-  "Хмельницька область": [
-    "KHMELNYTSKYI-DSTR",
-    "SHEPETIVSKYI-DSTR"
-  ],
-  "Чернівецька область": [
-    "VYZHNYTSKYI-DSTR",
-    "DNISTROVSKYI-DSTR",
-    "CHERNIVETSKYI-DSTR"
-  ],
-  "Житомирська область": [
-    "BERDYCHIVSKYI-DSTR",
-    "ZHYTOMYRSKYI-DSTR",
-    "KOROSTENSKYI-DSTR",
-    "NOVOHRAD-VOLYNSKYI-DSTR"
-  ],
-  "Київська область": [
-    "BILOTSERKIVSKYI-DSTR",
-    "BORYSPILSKYI-DSTR",
-    "BROVARSKYI-DSTR",
-    "BUCHANSKYI-DSTR",
-    "VYSHHORODSKYI-DSTR",
-    "OBUKHIVSKYI-DSTR",
-    "FASTIVSKYI-DSTR"
-  ],
-  "Чернігівська область": [
-    "KORIUKIVSKYI-DSTR",
-    "NIZHYNSKYI-DSTR",
-    "NOVHOROD-SIVERSKYI-DSTR",
-    "CHERNIHIVSKYI-DSTR"
-  ],
   "Вінницька область": [
     "VINNYTSKYI-DSTR",
     "HAISYNSKYI-DSTR",
@@ -128,75 +38,24 @@ OBLAST_TO_DISTRICTS = {
     "TULCHYNSKYI-DSTR",
     "KHMILNYTSKYI-DSTR"
   ],
-  "Черкаська область": [
-    "ZVENYHORODSKYI-DSTR",
-    "ZOLOTONISKYI-DSTR",
-    "UMANSKYI-DSTR",
-    "CHERKASKYI-DSTR"
-  ],
-  "Полтавська область": [
-    "KREMENCHUTSKYI-DSTR",
-    "LUBENSKYI-DSTR",
-    "MYRHORODSKYI-DSTR",
-    "POLTAVSKYI-DSTR"
-  ],
-  "Кіровоградська область": [
-    "HOLOVANIVSKYI-DSTR",
-    "KROPYVNYTSKYI-DSTR",
-    "NOVOUKRAINSKYI-DSTR",
-    "OLEKSANDRIISKYI-DSTR"
+  "Волинська область": [
+    "VOLODIMIR-VOLINSKYI-DSTR",
+    "KAMIN-KASHIRSKYI-DSTR",
+    "KOVELSKYI-DSTR",
+    "LUCKYI-DSTR",
+    "PRYLUTSKYI-DSTR"
   ],
   "Дніпропетровська область": [
+    "MARHANETS-CITY",
+    "NIKOPOL-CITY",
+    "POKROV-CITY",
     "DNIPROVSKYI-DSTR",
     "KAMIANSKYI-DSTR",
     "KRYVORIZKYI-DSTR",
     "NIKOPOLSKYI-DSTR",
-    "NOVOMOSKOVSKYI-DSTR",
     "PAVLOHRADSKYI-DSTR",
+    "NOVOMOSKOVSKYI-DSTR",
     "SYNELNYKIVSKYI-DSTR"
-  ],
-  "Миколаївська область": [
-    "BASHTANSKYI-DSTR",
-    "VOZNESENSKYI-DSTR",
-    "MYKOLAIVSKYI-DSTR",
-    "PERVOMAISKYI-DSTR"
-  ],
-  "Херсонська область": [
-    "BERYSLAVSKYI-DSTR",
-    "HENICHESKYI-DSTR",
-    "KAKHOVSKYI-DSTR",
-    "SKADOVSKYI-DSTR",
-    "KHERSONSKYI-DSTR"
-  ],
-  "Запорізька область": [
-    "BERDIANSKYI-DSTR",
-    "VASYLIVSKYI-DSTR",
-    "ZAPORIZKYI-DSTR",
-    "MELITOPOLSKYI-DSTR",
-    "POLOHIVSKYI-DSTR"
-  ],
-  "АР Крим": [
-    "BAKHCHYSARAISKYI-DSTR",
-    "YEVPATORIISKYI-DSTR",
-    "KURMANSKYI-DSTR",
-    "PEREKOPSKYI-DSTR",
-    "SIMFEROPOLSKYI-DSTR",
-    "FEODOSIISKYI-DSTR",
-    "DZHANKOISKYI-DSTR",
-    "YALTYNSKYI-DSTR",
-    "BILOHIRSKYI-DSTR",
-    "KERCHENSKYI-DSTR",
-    "SEVASTOPOL-CITY"
-  ],
-  "Харківська область": [
-    "BOHODUKHIVSKYI-DSTR",
-    "IZIUMSKYI-DSTR",
-    "KRASNOHRADSKYI-DSTR",
-    "KUPIANSKYI-DSTR",
-    "LOZIVSKYI-DSTR",
-    "KHARKIVSKYI-DSTR",
-    "CHUHUIVSKYI-DSTR",
-    "KHARKIV-CITY"
   ],
   "Донецька область": [
     "BAKHMUTSKYI-DSTR",
@@ -209,24 +68,163 @@ OBLAST_TO_DISTRICTS = {
     "POKROVSKYI-DSTR",
     "SIEVIERODONETSKYI-DSTR"
   ],
-  "Луганська область": [
-    "ALCHEVSKYI-DSTR",
-    "DOVZHANSKYI-DSTR",
-    "LUHANSKYI-DSTR",
-    "SVATIVSKYI-DSTR",
-    "STAROBILSKYI-DSTR",
-    "SHCHASTYNSKYI-DSTR",
-    "ROVENKIVSKYI-DSTR"
+  "Житомирська область": [
+    "BERDYCHIVSKYI-DSTR",
+    "ZHYTOMYRSKYI-DSTR",
+    "NOVOHRAD-VOLYNSKYI-DSTR",
+    "KOROSTENSKYI-DSTR"
+  ],
+  "Закарпатська область": [
+    "BEREHIVSKYI-DSTR",
+    "MUKACHIVSKYI-DSTR",
+    "RAKHIVSKYI-DSTR",
+    "TIACHIVSKYI-DSTR",
+    "UZHHORODSKYI-DSTR",
+    "KHUSTSKYI-DSTR"
+  ],
+  "Запорізька область": [
+    "ZAPORIZHZHIA-CITY",
+    "BERDIANSKYI-DSTR",
+    "VASYLIVSKYI-DSTR",
+    "ZAPORIZKYI-DSTR",
+    "MELITOPOLSKYI-DSTR",
+    "POLOHIVSKYI-DSTR"
+  ],
+  "Івано-Франківська область": [
+    "IVANO-FRANKIVSKYI-DSTR",
+    "VERKHOVYNSKYI-DSTR",
+    "KALUSKYI-DSTR",
+    "KOLOMYISKYI-DSTR",
+    "KOSIVSKYI-DSTR",
+    "NADVIRNIANSKYI-DSTR"
+  ],
+  "Київська область": [
+    "SLAVUTICH-CITY",
+    "BORYSPILSKYI-DSTR",
+    "BROVARSKYI-DSTR",
+    "BUCHANSKYI-DSTR",
+    "BILOTSERKIVSKYI-DSTR",
+    "VYSHHORODSKYI-DSTR",
+    "OBUKHIVSKYI-DSTR",
+    "FASTIVSKYI-DSTR"
   ],
   "м. Київ": [
     "KIYEW"
   ],
-  "Інші регіони": [
-    "MARHANETS-CITY",
-    "NIKOPOL-CITY",
-    "ZAPORIZHZHIA-CITY",
-    "POKROV-CITY",
-    "SLAVUTICH-CITY"
+  "Кіровоградська область": [
+    "HOLOVANIVSKYI-DSTR",
+    "KROPYVNYTSKYI-DSTR",
+    "NOVOUKRAINSKYI-DSTR",
+    "OLEKSANDRIISKYI-DSTR"
+  ],
+  "Луганська область": [
+    "ALCHEVSKYI-DSTR",
+    "DOVZHANSKYI-DSTR",
+    "LUHANSKYI-DSTR",
+    "ROVENKIVSKYI-DSTR",
+    "SVATIVSKYI-DSTR",
+    "STAROBILSKYI-DSTR",
+    "SHCHASTYNSKYI-DSTR"
+  ],
+  "Львівська область": [
+    "DROGOBICKYI-DSTR",
+    "ZOLOCHIVSKYI-DSTR",
+    "LVIVSKYI-DSTR",
+    "SAMBIRSKYI-DSTR",
+    "STRIJSKYI-DSTR",
+    "CHERVONOGRADSKYI-DSTR",
+    "YAVORIVSKYI-DSTR"
+  ],
+  "Миколаївська область": [
+    "BASHTANSKYI-DSTR",
+    "VOZNESENSKYI-DSTR",
+    "MYKOLAIVSKYI-DSTR",
+    "PERVOMAISKYI-DSTR"
+  ],
+  "Одеська область": [
+    "IZMAILSKYI-DSTR",
+    "BEREZIVSKYI-DSTR",
+    "BOLHRADSKYI-DSTR",
+    "BILHOROD-DNISTROVSKYI-DSTR",
+    "KAMIANETS-PODILSKYI-DSTR",
+    "ODESKYI-DSTR",
+    "PODILSKYI-DSTR",
+    "ROZDILNIANSKYI-DSTR"
+  ],
+  "Полтавська область": [
+    "KREMENCHUTSKYI-DSTR",
+    "LUBENSKYI-DSTR",
+    "MYRHORODSKYI-DSTR",
+    "POLTAVSKYI-DSTR"
+  ],
+  "Рівненська область": [
+    "VARASKYI-DSTR",
+    "DUBENSKYI-DSTR",
+    "RIVNENSKYI-DSTR",
+    "SARNENSKYI-DSTR"
+  ],
+  "Сумська область": [
+    "KONOTOPSKYI-DSTR",
+    "OKHTYRSKYI-DSTR",
+    "ROMENSKYI-DSTR",
+    "SUMSKYI-DSTR",
+    "SHOSTKYNSKYI-DSTR"
+  ],
+  "Тернопільська область": [
+    "KREMENECKYI-DSTR",
+    "TERNOPILSKYI-DSTR",
+    "CHORTKIVSKYI-DSTR"
+  ],
+  "Харківська область": [
+    "KHARKIV-CITY",
+    "IZIUMSKYI-DSTR",
+    "KRASNOHRADSKYI-DSTR",
+    "BOHODUKHIVSKYI-DSTR",
+    "KUPIANSKYI-DSTR",
+    "LOZIVSKYI-DSTR",
+    "KHARKIVSKYI-DSTR",
+    "CHUHUIVSKYI-DSTR"
+  ],
+  "Херсонська область": [
+    "BERYSLAVSKYI-DSTR",
+    "HENICHESKYI-DSTR",
+    "KAKHOVSKYI-DSTR",
+    "SKADOVSKYI-DSTR",
+    "KHERSONSKYI-DSTR"
+  ],
+  "Хмельницька область": [
+    "KHMELNYTSKYI-DSTR",
+    "SHEPETIVSKYI-DSTR"
+  ],
+  "Черкаська область": [
+    "ZVENYHORODSKYI-DSTR",
+    "ZOLOTONISKYI-DSTR",
+    "UMANSKYI-DSTR",
+    "CHERKASKYI-DSTR"
+  ],
+  "Чернівецька область": [
+    "VYZHNYTSKYI-DSTR",
+    "DNISTROVSKYI-DSTR",
+    "CHERNIVETSKYI-DSTR"
+  ],
+  "Чернігівська область": [
+    "KORIUKIVSKYI-DSTR",
+    "NOVHOROD-SIVERSKYI-DSTR",
+    "NIZHYNSKYI-DSTR",
+    "CHERNIHIVSKYI-DSTR"
+  ],
+  "АР Крим": [
+    "SEVASTOPOL-CITY",
+    "YEVPATORIISKYI-DSTR",
+    "BAKHCHYSARAISKYI-DSTR",
+    "BILOHIRSKYI-DSTR",
+    "DZHANKOISKYI-DSTR",
+    "KERCHENSKYI-DSTR",
+    "KURMANSKYI-DSTR",
+    "PEREKOPSKYI-DSTR",
+    "SIMFEROPOLSKYI-DSTR",
+    "FEODOSIISKYI-DSTR",
+    "YALTYNSKYI-DSTR"
   ]
 }
 
@@ -234,723 +232,1906 @@ DISTRICTS_BY_SLUG = {
   "ODESKYI-DSTR": {
     "slug": "ODESKYI-DSTR",
     "title": "Одеський район",
-    "titleEn": "Odesa District"
+    "rawTitle": "Одеський район",
+    "titleEn": "Odesa District",
+    "isCity": False
   },
   "SUMSKYI-DSTR": {
     "slug": "SUMSKYI-DSTR",
     "title": "Сумський район",
-    "titleEn": "Sumy District"
+    "rawTitle": "Сумський район",
+    "titleEn": "Sumy District",
+    "isCity": False
   },
   "DROGOBICKYI-DSTR": {
     "slug": "DROGOBICKYI-DSTR",
     "title": "Дрогобицький район",
-    "titleEn": "Drogobych District"
+    "rawTitle": "Дрогобицький район",
+    "titleEn": "Drogobych District",
+    "isCity": False
   },
   "SAMBIRSKYI-DSTR": {
     "slug": "SAMBIRSKYI-DSTR",
     "title": "Самбірський район",
-    "titleEn": "Sambir District"
+    "rawTitle": "Самбірський район",
+    "titleEn": "Sambir District",
+    "isCity": False
   },
   "ZOLOCHIVSKYI-DSTR": {
     "slug": "ZOLOCHIVSKYI-DSTR",
     "title": "Золочівський район",
-    "titleEn": "Zolochiv District"
+    "rawTitle": "Золочівський район",
+    "titleEn": "Zolochiv District",
+    "isCity": False
   },
   "STRIJSKYI-DSTR": {
     "slug": "STRIJSKYI-DSTR",
     "title": "Стрийський район",
-    "titleEn": "Stryi District"
+    "rawTitle": "Стрийський район",
+    "titleEn": "Stryi District",
+    "isCity": False
   },
   "LVIVSKYI-DSTR": {
     "slug": "LVIVSKYI-DSTR",
     "title": "Львівський район",
-    "titleEn": "Lviv District"
+    "rawTitle": "Львівський район",
+    "titleEn": "Lviv District",
+    "isCity": False
   },
   "CHERVONOGRADSKYI-DSTR": {
     "slug": "CHERVONOGRADSKYI-DSTR",
     "title": "Шептицький район",
-    "titleEn": "Sheptytskyi District"
+    "rawTitle": "Шептицький район",
+    "titleEn": "Sheptytskyi District",
+    "isCity": False
   },
   "YAVORIVSKYI-DSTR": {
     "slug": "YAVORIVSKYI-DSTR",
     "title": "Яворівський район",
-    "titleEn": "Yavoriv District"
+    "rawTitle": "Яворівський район",
+    "titleEn": "Yavoriv District",
+    "isCity": False
   },
   "VOLODIMIR-VOLINSKYI-DSTR": {
     "slug": "VOLODIMIR-VOLINSKYI-DSTR",
     "title": "Володимирський район",
-    "titleEn": "Volodymyr District"
+    "rawTitle": "Володимирський район",
+    "titleEn": "Volodymyr District",
+    "isCity": False
   },
   "KAMIN-KASHIRSKYI-DSTR": {
     "slug": "KAMIN-KASHIRSKYI-DSTR",
     "title": "Камінь-Каширський район",
-    "titleEn": "Kamin-Kashyrskyi District"
+    "rawTitle": "Камінь-Каширський район",
+    "titleEn": "Kamin-Kashyrskyi District",
+    "isCity": False
   },
   "KOVELSKYI-DSTR": {
     "slug": "KOVELSKYI-DSTR",
     "title": "Ковельський район",
-    "titleEn": "Kovel District"
+    "rawTitle": "Ковельський район",
+    "titleEn": "Kovel District",
+    "isCity": False
   },
   "LUCKYI-DSTR": {
     "slug": "LUCKYI-DSTR",
     "title": "Луцький район",
-    "titleEn": "Lutsk District"
+    "rawTitle": "Луцький район",
+    "titleEn": "Lutsk District",
+    "isCity": False
   },
   "KREMENECKYI-DSTR": {
     "slug": "KREMENECKYI-DSTR",
     "title": "Кременецький район",
-    "titleEn": "Kremenets District"
+    "rawTitle": "Кременецький район",
+    "titleEn": "Kremenets District",
+    "isCity": False
   },
   "TERNOPILSKYI-DSTR": {
     "slug": "TERNOPILSKYI-DSTR",
     "title": "Тернопільський район",
-    "titleEn": "Ternopil District"
+    "rawTitle": "Тернопільський район",
+    "titleEn": "Ternopil District",
+    "isCity": False
   },
   "CHORTKIVSKYI-DSTR": {
     "slug": "CHORTKIVSKYI-DSTR",
     "title": "Чортківський район",
-    "titleEn": "Chortkiv District"
+    "rawTitle": "Чортківський район",
+    "titleEn": "Chortkiv District",
+    "isCity": False
   },
   "VARASKYI-DSTR": {
     "slug": "VARASKYI-DSTR",
     "title": "Вараський район",
-    "titleEn": "Varash District"
+    "rawTitle": "Вараський район",
+    "titleEn": "Varash District",
+    "isCity": False
   },
   "DUBENSKYI-DSTR": {
     "slug": "DUBENSKYI-DSTR",
     "title": "Дубенський район",
-    "titleEn": "Dubenskiy District"
+    "rawTitle": "Дубенський район",
+    "titleEn": "Dubenskiy District",
+    "isCity": False
   },
   "RIVNENSKYI-DSTR": {
     "slug": "RIVNENSKYI-DSTR",
     "title": "Рівненський район",
-    "titleEn": "Rivnenskiy District"
+    "rawTitle": "Рівненський район",
+    "titleEn": "Rivnenskiy District",
+    "isCity": False
   },
   "SARNENSKYI-DSTR": {
     "slug": "SARNENSKYI-DSTR",
     "title": "Сарненський район",
-    "titleEn": "Sarnenskiy District"
+    "rawTitle": "Сарненський район",
+    "titleEn": "Sarnenskiy District",
+    "isCity": False
   },
   "BEREHIVSKYI-DSTR": {
     "slug": "BEREHIVSKYI-DSTR",
     "title": "Берегівський район",
-    "titleEn": "Beregove District"
+    "rawTitle": "Берегівський район",
+    "titleEn": "Beregove District",
+    "isCity": False
   },
   "MUKACHIVSKYI-DSTR": {
     "slug": "MUKACHIVSKYI-DSTR",
     "title": "Мукачівський район",
-    "titleEn": "Mukachevo District"
+    "rawTitle": "Мукачівський район",
+    "titleEn": "Mukachevo District",
+    "isCity": False
   },
   "RAKHIVSKYI-DSTR": {
     "slug": "RAKHIVSKYI-DSTR",
     "title": "Рахівський район",
-    "titleEn": "Rahiv District"
+    "rawTitle": "Рахівський район",
+    "titleEn": "Rahiv District",
+    "isCity": False
   },
   "TIACHIVSKYI-DSTR": {
     "slug": "TIACHIVSKYI-DSTR",
     "title": "Тячівський район",
-    "titleEn": "Tyachiv District"
+    "rawTitle": "Тячівський район",
+    "titleEn": "Tyachiv District",
+    "isCity": False
   },
   "UZHHORODSKYI-DSTR": {
     "slug": "UZHHORODSKYI-DSTR",
     "title": "Ужгородський район",
-    "titleEn": "Uzhhorod District"
+    "rawTitle": "Ужгородський район",
+    "titleEn": "Uzhhorod District",
+    "isCity": False
   },
   "KHUSTSKYI-DSTR": {
     "slug": "KHUSTSKYI-DSTR",
     "title": "Хустський район",
-    "titleEn": "Khustskiy District"
+    "rawTitle": "Хустський район",
+    "titleEn": "Khustskiy District",
+    "isCity": False
   },
   "VERKHOVYNSKYI-DSTR": {
     "slug": "VERKHOVYNSKYI-DSTR",
     "title": "Верховинський район",
-    "titleEn": "Verkhovyna District"
+    "rawTitle": "Верховинський район",
+    "titleEn": "Verkhovyna District",
+    "isCity": False
   },
   "IVANO-FRANKIVSKYI-DSTR": {
     "slug": "IVANO-FRANKIVSKYI-DSTR",
     "title": "Івано-Франківський район",
-    "titleEn": "Ivano-Frankivsk Disctrict"
+    "rawTitle": "Івано-Франківський район",
+    "titleEn": "Ivano-Frankivsk Disctrict",
+    "isCity": False
   },
   "KALUSKYI-DSTR": {
     "slug": "KALUSKYI-DSTR",
     "title": "Калуський район",
-    "titleEn": "Kalush District"
+    "rawTitle": "Калуський район",
+    "titleEn": "Kalush District",
+    "isCity": False
   },
   "KOLOMYISKYI-DSTR": {
     "slug": "KOLOMYISKYI-DSTR",
     "title": "Коломийський район",
-    "titleEn": "Kolomyia District"
+    "rawTitle": "Коломийський район",
+    "titleEn": "Kolomyia District",
+    "isCity": False
   },
   "KOSIVSKYI-DSTR": {
     "slug": "KOSIVSKYI-DSTR",
     "title": "Косівський район",
-    "titleEn": "Kosiv District"
+    "rawTitle": "Косівський район",
+    "titleEn": "Kosiv District",
+    "isCity": False
   },
   "NADVIRNIANSKYI-DSTR": {
     "slug": "NADVIRNIANSKYI-DSTR",
     "title": "Надвірнянський район",
-    "titleEn": "Nadvirna District"
+    "rawTitle": "Надвірнянський район",
+    "titleEn": "Nadvirna District",
+    "isCity": False
   },
   "KAMIANETS-PODILSKYI-DSTR": {
     "slug": "KAMIANETS-PODILSKYI-DSTR",
     "title": "Кам'янець-Подільський район",
-    "titleEn": "Kamianets-Podilskyi District"
+    "rawTitle": "Кам'янець-Подільський район",
+    "titleEn": "Kamianets-Podilskyi District",
+    "isCity": False
   },
   "KHMELNYTSKYI-DSTR": {
     "slug": "KHMELNYTSKYI-DSTR",
     "title": "Хмельницький район",
-    "titleEn": "Khmelnytskyi District"
+    "rawTitle": "Хмельницький район",
+    "titleEn": "Khmelnytskyi District",
+    "isCity": False
   },
   "SHEPETIVSKYI-DSTR": {
     "slug": "SHEPETIVSKYI-DSTR",
     "title": "Шепетівський район",
-    "titleEn": "Shepetivka District"
+    "rawTitle": "Шепетівський район",
+    "titleEn": "Shepetivka District",
+    "isCity": False
   },
   "VYZHNYTSKYI-DSTR": {
     "slug": "VYZHNYTSKYI-DSTR",
     "title": "Вижницький район",
-    "titleEn": "Vyzhnytsya District"
+    "rawTitle": "Вижницький район",
+    "titleEn": "Vyzhnytsya District",
+    "isCity": False
   },
   "DNISTROVSKYI-DSTR": {
     "slug": "DNISTROVSKYI-DSTR",
     "title": "Дністровський район",
-    "titleEn": "Dnistrovskiy District"
+    "rawTitle": "Дністровський район",
+    "titleEn": "Dnistrovskiy District",
+    "isCity": False
   },
   "CHERNIVETSKYI-DSTR": {
     "slug": "CHERNIVETSKYI-DSTR",
     "title": "Чернівецький район",
-    "titleEn": "Cherniveckiy District"
+    "rawTitle": "Чернівецький район",
+    "titleEn": "Cherniveckiy District",
+    "isCity": False
   },
   "BERDYCHIVSKYI-DSTR": {
     "slug": "BERDYCHIVSKYI-DSTR",
     "title": "Бердичівський район",
-    "titleEn": "Berdichiv District"
+    "rawTitle": "Бердичівський район",
+    "titleEn": "Berdichiv District",
+    "isCity": False
   },
   "ZHYTOMYRSKYI-DSTR": {
     "slug": "ZHYTOMYRSKYI-DSTR",
     "title": "Житомирський район",
-    "titleEn": "Zhytomyr District"
+    "rawTitle": "Житомирський район",
+    "titleEn": "Zhytomyr District",
+    "isCity": False
   },
   "KOROSTENSKYI-DSTR": {
     "slug": "KOROSTENSKYI-DSTR",
     "title": "Коростенський район",
-    "titleEn": "Korosten District"
+    "rawTitle": "Коростенський район",
+    "titleEn": "Korosten District",
+    "isCity": False
   },
   "NOVOHRAD-VOLYNSKYI-DSTR": {
     "slug": "NOVOHRAD-VOLYNSKYI-DSTR",
     "title": "Звягельський район",
-    "titleEn": "Zvyagel District"
+    "rawTitle": "Звягельський район",
+    "titleEn": "Zvyagel District",
+    "isCity": False
   },
   "BILOTSERKIVSKYI-DSTR": {
     "slug": "BILOTSERKIVSKYI-DSTR",
     "title": "Білоцерківський район",
-    "titleEn": "Bila Tserkva District"
+    "rawTitle": "Білоцерківський район",
+    "titleEn": "Bila Tserkva District",
+    "isCity": False
   },
   "BORYSPILSKYI-DSTR": {
     "slug": "BORYSPILSKYI-DSTR",
     "title": "Бориспільський район",
-    "titleEn": "Boryspil District"
+    "rawTitle": "Бориспільський район",
+    "titleEn": "Boryspil District",
+    "isCity": False
   },
   "BROVARSKYI-DSTR": {
     "slug": "BROVARSKYI-DSTR",
     "title": "Броварський район",
-    "titleEn": "Brovary District"
+    "rawTitle": "Броварський район",
+    "titleEn": "Brovary District",
+    "isCity": False
   },
   "BUCHANSKYI-DSTR": {
     "slug": "BUCHANSKYI-DSTR",
     "title": "Бучанський район",
-    "titleEn": "Bucha District"
+    "rawTitle": "Бучанський район",
+    "titleEn": "Bucha District",
+    "isCity": False
   },
   "VYSHHORODSKYI-DSTR": {
     "slug": "VYSHHORODSKYI-DSTR",
     "title": "Вишгородський район",
-    "titleEn": "Vyshhorod District"
+    "rawTitle": "Вишгородський район",
+    "titleEn": "Vyshhorod District",
+    "isCity": False
   },
   "OBUKHIVSKYI-DSTR": {
     "slug": "OBUKHIVSKYI-DSTR",
     "title": "Обухівський район",
-    "titleEn": "Obukhiv District"
+    "rawTitle": "Обухівський район",
+    "titleEn": "Obukhiv District",
+    "isCity": False
   },
   "FASTIVSKYI-DSTR": {
     "slug": "FASTIVSKYI-DSTR",
     "title": "Фастівський район",
-    "titleEn": "Fastiv District"
+    "rawTitle": "Фастівський район",
+    "titleEn": "Fastiv District",
+    "isCity": False
   },
   "KORIUKIVSKYI-DSTR": {
     "slug": "KORIUKIVSKYI-DSTR",
     "title": "Корюківський район",
-    "titleEn": "Koryukivka District"
+    "rawTitle": "Корюківський район",
+    "titleEn": "Koryukivka District",
+    "isCity": False
   },
   "NIZHYNSKYI-DSTR": {
     "slug": "NIZHYNSKYI-DSTR",
     "title": "Ніжинський район",
-    "titleEn": "Nizhyn District"
+    "rawTitle": "Ніжинський район",
+    "titleEn": "Nizhyn District",
+    "isCity": False
   },
   "NOVHOROD-SIVERSKYI-DSTR": {
     "slug": "NOVHOROD-SIVERSKYI-DSTR",
     "title": "Новгород-Сіверський район",
-    "titleEn": "Novhorod-Siverskyi District"
+    "rawTitle": "Новгород-Сіверський район",
+    "titleEn": "Novhorod-Siverskyi District",
+    "isCity": False
   },
   "PRYLUTSKYI-DSTR": {
     "slug": "PRYLUTSKYI-DSTR",
     "title": "Прилуцький район",
-    "titleEn": "Pryluky District"
+    "rawTitle": "Прилуцький район",
+    "titleEn": "Pryluky District",
+    "isCity": False
   },
   "CHERNIHIVSKYI-DSTR": {
     "slug": "CHERNIHIVSKYI-DSTR",
     "title": "Чернігівський район",
-    "titleEn": "Chernihiv District"
+    "rawTitle": "Чернігівський район",
+    "titleEn": "Chernihiv District",
+    "isCity": False
   },
   "KONOTOPSKYI-DSTR": {
     "slug": "KONOTOPSKYI-DSTR",
     "title": "Конотопський район",
-    "titleEn": "Konotop District"
+    "rawTitle": "Конотопський район",
+    "titleEn": "Konotop District",
+    "isCity": False
   },
   "OKHTYRSKYI-DSTR": {
     "slug": "OKHTYRSKYI-DSTR",
     "title": "Охтирський район",
-    "titleEn": "Okhtyrka District"
+    "rawTitle": "Охтирський район",
+    "titleEn": "Okhtyrka District",
+    "isCity": False
   },
   "ROMENSKYI-DSTR": {
     "slug": "ROMENSKYI-DSTR",
     "title": "Роменський район",
-    "titleEn": "Romny District"
+    "rawTitle": "Роменський район",
+    "titleEn": "Romny District",
+    "isCity": False
   },
   "SHOSTKYNSKYI-DSTR": {
     "slug": "SHOSTKYNSKYI-DSTR",
     "title": "Шосткинський район",
-    "titleEn": "Shostka District"
+    "rawTitle": "Шосткинський район",
+    "titleEn": "Shostka District",
+    "isCity": False
   },
   "VINNYTSKYI-DSTR": {
     "slug": "VINNYTSKYI-DSTR",
     "title": "Вінницький район",
-    "titleEn": "Vinnickiy District"
+    "rawTitle": "Вінницький район",
+    "titleEn": "Vinnickiy District",
+    "isCity": False
   },
   "HAISYNSKYI-DSTR": {
     "slug": "HAISYNSKYI-DSTR",
     "title": "Гайсинський район",
-    "titleEn": "Haisyn District"
+    "rawTitle": "Гайсинський район",
+    "titleEn": "Haisyn District",
+    "isCity": False
   },
   "ZHMERYNSKYI-DSTR": {
     "slug": "ZHMERYNSKYI-DSTR",
     "title": "Жмеринський район",
-    "titleEn": "Zhmerynka District"
+    "rawTitle": "Жмеринський район",
+    "titleEn": "Zhmerynka District",
+    "isCity": False
   },
   "MOHYLIV-PODILSKYI-DSTR": {
     "slug": "MOHYLIV-PODILSKYI-DSTR",
     "title": "Могилів-Подільський район",
-    "titleEn": "Mohyliv-Podil's'kyi District"
+    "rawTitle": "Могилів-Подільський район",
+    "titleEn": "Mohyliv-Podil's'kyi District",
+    "isCity": False
   },
   "TULCHYNSKYI-DSTR": {
     "slug": "TULCHYNSKYI-DSTR",
     "title": "Тульчинський район",
-    "titleEn": "Tulchinskiy District"
+    "rawTitle": "Тульчинський район",
+    "titleEn": "Tulchinskiy District",
+    "isCity": False
   },
   "KHMILNYTSKYI-DSTR": {
     "slug": "KHMILNYTSKYI-DSTR",
     "title": "Хмільницький район",
-    "titleEn": "Khmilnyk District"
+    "rawTitle": "Хмільницький район",
+    "titleEn": "Khmilnyk District",
+    "isCity": False
   },
   "ZVENYHORODSKYI-DSTR": {
     "slug": "ZVENYHORODSKYI-DSTR",
     "title": "Звенигородський район",
-    "titleEn": "Zvenyhorodka District"
+    "rawTitle": "Звенигородський район",
+    "titleEn": "Zvenyhorodka District",
+    "isCity": False
   },
   "ZOLOTONISKYI-DSTR": {
     "slug": "ZOLOTONISKYI-DSTR",
     "title": "Золотоніський район",
-    "titleEn": "Zolotonosha District"
+    "rawTitle": "Золотоніський район",
+    "titleEn": "Zolotonosha District",
+    "isCity": False
   },
   "UMANSKYI-DSTR": {
     "slug": "UMANSKYI-DSTR",
     "title": "Уманський район",
-    "titleEn": "Uman District"
+    "rawTitle": "Уманський район",
+    "titleEn": "Uman District",
+    "isCity": False
   },
   "CHERKASKYI-DSTR": {
     "slug": "CHERKASKYI-DSTR",
     "title": "Черкаський район",
-    "titleEn": "Cherkasy District"
+    "rawTitle": "Черкаський район",
+    "titleEn": "Cherkasy District",
+    "isCity": False
   },
   "KREMENCHUTSKYI-DSTR": {
     "slug": "KREMENCHUTSKYI-DSTR",
     "title": "Кременчуцький район",
-    "titleEn": "Kremenchuk District"
+    "rawTitle": "Кременчуцький район",
+    "titleEn": "Kremenchuk District",
+    "isCity": False
   },
   "LUBENSKYI-DSTR": {
     "slug": "LUBENSKYI-DSTR",
     "title": "Лубенський район",
-    "titleEn": "Lubny District"
+    "rawTitle": "Лубенський район",
+    "titleEn": "Lubny District",
+    "isCity": False
   },
   "MYRHORODSKYI-DSTR": {
     "slug": "MYRHORODSKYI-DSTR",
     "title": "Миргородський район",
-    "titleEn": "Mirgorod District"
+    "rawTitle": "Миргородський район",
+    "titleEn": "Mirgorod District",
+    "isCity": False
   },
   "POLTAVSKYI-DSTR": {
     "slug": "POLTAVSKYI-DSTR",
     "title": "Полтавський район",
-    "titleEn": "Poltava District"
+    "rawTitle": "Полтавський район",
+    "titleEn": "Poltava District",
+    "isCity": False
   },
   "HOLOVANIVSKYI-DSTR": {
     "slug": "HOLOVANIVSKYI-DSTR",
     "title": "Голованівський район",
-    "titleEn": "Golovanivskiy District"
+    "rawTitle": "Голованівський район",
+    "titleEn": "Golovanivskiy District",
+    "isCity": False
   },
   "KROPYVNYTSKYI-DSTR": {
     "slug": "KROPYVNYTSKYI-DSTR",
     "title": "Кропивницький район",
-    "titleEn": "Kropivnickiy District"
+    "rawTitle": "Кропивницький район",
+    "titleEn": "Kropivnickiy District",
+    "isCity": False
   },
   "NOVOUKRAINSKYI-DSTR": {
     "slug": "NOVOUKRAINSKYI-DSTR",
     "title": "Новоукраїнський район",
-    "titleEn": "Novoukrayinskiy District"
+    "rawTitle": "Новоукраїнський район",
+    "titleEn": "Novoukrayinskiy District",
+    "isCity": False
   },
   "OLEKSANDRIISKYI-DSTR": {
     "slug": "OLEKSANDRIISKYI-DSTR",
     "title": "Олександрійський район",
-    "titleEn": "Oleksandriyskiy District"
+    "rawTitle": "Олександрійський район",
+    "titleEn": "Oleksandriyskiy District",
+    "isCity": False
   },
   "DNIPROVSKYI-DSTR": {
     "slug": "DNIPROVSKYI-DSTR",
     "title": "Дніпровський район",
-    "titleEn": "Dnipro District"
+    "rawTitle": "Дніпровський район",
+    "titleEn": "Dnipro District",
+    "isCity": False
   },
   "KAMIANSKYI-DSTR": {
     "slug": "KAMIANSKYI-DSTR",
     "title": "Кам'янський район",
-    "titleEn": "Kam'yanske District"
+    "rawTitle": "Кам'янський район",
+    "titleEn": "Kam'yanske District",
+    "isCity": False
   },
   "KRYVORIZKYI-DSTR": {
     "slug": "KRYVORIZKYI-DSTR",
     "title": "Криворізький район",
-    "titleEn": "Kriviy Rih District"
+    "rawTitle": "Криворізький район",
+    "titleEn": "Kriviy Rih District",
+    "isCity": False
   },
   "NIKOPOLSKYI-DSTR": {
     "slug": "NIKOPOLSKYI-DSTR",
     "title": "Нікопольський район",
-    "titleEn": "Nikopol District"
+    "rawTitle": "Нікопольський район",
+    "titleEn": "Nikopol District",
+    "isCity": False
   },
   "NOVOMOSKOVSKYI-DSTR": {
     "slug": "NOVOMOSKOVSKYI-DSTR",
     "title": "Самарівський район",
-    "titleEn": "Samar District"
+    "rawTitle": "Самарівський район",
+    "titleEn": "Samar District",
+    "isCity": False
   },
   "PAVLOHRADSKYI-DSTR": {
     "slug": "PAVLOHRADSKYI-DSTR",
     "title": "Павлоградський район",
-    "titleEn": "Pavlograd District"
+    "rawTitle": "Павлоградський район",
+    "titleEn": "Pavlograd District",
+    "isCity": False
   },
   "SYNELNYKIVSKYI-DSTR": {
     "slug": "SYNELNYKIVSKYI-DSTR",
     "title": "Синельниківський район",
-    "titleEn": "Synel'nykove District"
+    "rawTitle": "Синельниківський район",
+    "titleEn": "Synel'nykove District",
+    "isCity": False
   },
   "BEREZIVSKYI-DSTR": {
     "slug": "BEREZIVSKYI-DSTR",
     "title": "Березівський район",
-    "titleEn": "Berezivka District"
+    "rawTitle": "Березівський район",
+    "titleEn": "Berezivka District",
+    "isCity": False
   },
   "BILHOROD-DNISTROVSKYI-DSTR": {
     "slug": "BILHOROD-DNISTROVSKYI-DSTR",
     "title": "Білгород-Дністровський район",
-    "titleEn": "Bilhorod-Dnistrovskyi District"
+    "rawTitle": "Білгород-Дністровський район",
+    "titleEn": "Bilhorod-Dnistrovskyi District",
+    "isCity": False
   },
   "IZMAILSKYI-DSTR": {
     "slug": "IZMAILSKYI-DSTR",
     "title": "Ізмаїльський район",
-    "titleEn": "Izmail District"
+    "rawTitle": "Ізмаїльський район",
+    "titleEn": "Izmail District",
+    "isCity": False
   },
   "PODILSKYI-DSTR": {
     "slug": "PODILSKYI-DSTR",
     "title": "Подільський район",
-    "titleEn": "Podilsk District"
+    "rawTitle": "Подільський район",
+    "titleEn": "Podilsk District",
+    "isCity": False
   },
   "ROZDILNIANSKYI-DSTR": {
     "slug": "ROZDILNIANSKYI-DSTR",
     "title": "Роздільнянський район",
-    "titleEn": "Rozdilna District"
+    "rawTitle": "Роздільнянський район",
+    "titleEn": "Rozdilna District",
+    "isCity": False
   },
   "BASHTANSKYI-DSTR": {
     "slug": "BASHTANSKYI-DSTR",
     "title": "Баштанський район",
-    "titleEn": "Bashtanka District"
+    "rawTitle": "Баштанський район",
+    "titleEn": "Bashtanka District",
+    "isCity": False
   },
   "VOZNESENSKYI-DSTR": {
     "slug": "VOZNESENSKYI-DSTR",
     "title": "Вознесенський район",
-    "titleEn": "Voznesensk District"
+    "rawTitle": "Вознесенський район",
+    "titleEn": "Voznesensk District",
+    "isCity": False
   },
   "MYKOLAIVSKYI-DSTR": {
     "slug": "MYKOLAIVSKYI-DSTR",
     "title": "Миколаївський район",
-    "titleEn": "Mykolaiv District"
+    "rawTitle": "Миколаївський район",
+    "titleEn": "Mykolaiv District",
+    "isCity": False
   },
   "PERVOMAISKYI-DSTR": {
     "slug": "PERVOMAISKYI-DSTR",
     "title": "Первомайський район",
-    "titleEn": "Pervomaysk District"
+    "rawTitle": "Первомайський район",
+    "titleEn": "Pervomaysk District",
+    "isCity": False
   },
   "BERYSLAVSKYI-DSTR": {
     "slug": "BERYSLAVSKYI-DSTR",
     "title": "Бериславський район",
-    "titleEn": "Beryslav District"
+    "rawTitle": "Бериславський район",
+    "titleEn": "Beryslav District",
+    "isCity": False
   },
   "HENICHESKYI-DSTR": {
     "slug": "HENICHESKYI-DSTR",
     "title": "Генічеський район",
-    "titleEn": "Henichesk District"
+    "rawTitle": "Генічеський район",
+    "titleEn": "Henichesk District",
+    "isCity": False
   },
   "KAKHOVSKYI-DSTR": {
     "slug": "KAKHOVSKYI-DSTR",
     "title": "Каховський район",
-    "titleEn": "Kakhovka District"
+    "rawTitle": "Каховський район",
+    "titleEn": "Kakhovka District",
+    "isCity": False
   },
   "SKADOVSKYI-DSTR": {
     "slug": "SKADOVSKYI-DSTR",
     "title": "Скадовський район",
-    "titleEn": "Skadovsk District"
+    "rawTitle": "Скадовський район",
+    "titleEn": "Skadovsk District",
+    "isCity": False
   },
   "KHERSONSKYI-DSTR": {
     "slug": "KHERSONSKYI-DSTR",
     "title": "Херсонський район",
-    "titleEn": "Kherson District"
+    "rawTitle": "Херсонський район",
+    "titleEn": "Kherson District",
+    "isCity": False
   },
   "BERDIANSKYI-DSTR": {
     "slug": "BERDIANSKYI-DSTR",
     "title": "Бердянський район",
-    "titleEn": "Berdyanskiy District"
+    "rawTitle": "Бердянський район",
+    "titleEn": "Berdyanskiy District",
+    "isCity": False
   },
   "VASYLIVSKYI-DSTR": {
     "slug": "VASYLIVSKYI-DSTR",
     "title": "Василівський район",
-    "titleEn": "Vasilivskiy District"
+    "rawTitle": "Василівський район",
+    "titleEn": "Vasilivskiy District",
+    "isCity": False
   },
   "ZAPORIZKYI-DSTR": {
     "slug": "ZAPORIZKYI-DSTR",
     "title": "Запорізький район",
-    "titleEn": "Zaporizhzhia District"
+    "rawTitle": "Запорізький район",
+    "titleEn": "Zaporizhzhia District",
+    "isCity": False
   },
   "MELITOPOLSKYI-DSTR": {
     "slug": "MELITOPOLSKYI-DSTR",
     "title": "Мелітопольський район",
-    "titleEn": "Melitopol District"
+    "rawTitle": "Мелітопольський район",
+    "titleEn": "Melitopol District",
+    "isCity": False
   },
   "POLOHIVSKYI-DSTR": {
     "slug": "POLOHIVSKYI-DSTR",
     "title": "Пологівський район",
-    "titleEn": "Polohy District"
+    "rawTitle": "Пологівський район",
+    "titleEn": "Polohy District",
+    "isCity": False
   },
   "BAKHCHYSARAISKYI-DSTR": {
     "slug": "BAKHCHYSARAISKYI-DSTR",
     "title": "Бахчисарайський район",
-    "titleEn": "Bahchisarayskiy District"
+    "rawTitle": "Бахчисарайський район",
+    "titleEn": "Bahchisarayskiy District",
+    "isCity": False
   },
   "YEVPATORIISKYI-DSTR": {
     "slug": "YEVPATORIISKYI-DSTR",
     "title": "Євпаторійський район",
-    "titleEn": "Ievpatoriyskiy District"
+    "rawTitle": "Євпаторійський район",
+    "titleEn": "Ievpatoriyskiy District",
+    "isCity": False
   },
   "KURMANSKYI-DSTR": {
     "slug": "KURMANSKYI-DSTR",
     "title": "Курманський район",
-    "titleEn": "Kurmanskiy District"
+    "rawTitle": "Курманський район",
+    "titleEn": "Kurmanskiy District",
+    "isCity": False
   },
   "PEREKOPSKYI-DSTR": {
     "slug": "PEREKOPSKYI-DSTR",
     "title": "Перекопський район",
-    "titleEn": "Perekopskiy District"
+    "rawTitle": "Перекопський район",
+    "titleEn": "Perekopskiy District",
+    "isCity": False
   },
   "SIMFEROPOLSKYI-DSTR": {
     "slug": "SIMFEROPOLSKYI-DSTR",
     "title": "Сімферопольський район",
-    "titleEn": "Simferopolskiy District"
+    "rawTitle": "Сімферопольський район",
+    "titleEn": "Simferopolskiy District",
+    "isCity": False
   },
   "FEODOSIISKYI-DSTR": {
     "slug": "FEODOSIISKYI-DSTR",
     "title": "Феодосійський район",
-    "titleEn": "Feodosiyskiy District"
+    "rawTitle": "Феодосійський район",
+    "titleEn": "Feodosiyskiy District",
+    "isCity": False
   },
   "DZHANKOISKYI-DSTR": {
     "slug": "DZHANKOISKYI-DSTR",
     "title": "Джанкойський район",
-    "titleEn": "Dzhankoyskiy District"
+    "rawTitle": "Джанкойський район",
+    "titleEn": "Dzhankoyskiy District",
+    "isCity": False
   },
   "YALTYNSKYI-DSTR": {
     "slug": "YALTYNSKYI-DSTR",
     "title": "Ялтинський район",
-    "titleEn": "Yaltinskiy District"
+    "rawTitle": "Ялтинський район",
+    "titleEn": "Yaltinskiy District",
+    "isCity": False
   },
   "BOHODUKHIVSKYI-DSTR": {
     "slug": "BOHODUKHIVSKYI-DSTR",
     "title": "Богодухівський район",
-    "titleEn": "Bogoduhiv District"
+    "rawTitle": "Богодухівський район",
+    "titleEn": "Bogoduhiv District",
+    "isCity": False
   },
   "IZIUMSKYI-DSTR": {
     "slug": "IZIUMSKYI-DSTR",
     "title": "Ізюмський район",
-    "titleEn": "Izyum District"
+    "rawTitle": "Ізюмський район",
+    "titleEn": "Izyum District",
+    "isCity": False
   },
   "KRASNOHRADSKYI-DSTR": {
     "slug": "KRASNOHRADSKYI-DSTR",
     "title": "Берестинський район",
-    "titleEn": "Berestyn District"
+    "rawTitle": "Берестинський район",
+    "titleEn": "Berestyn District",
+    "isCity": False
   },
   "KUPIANSKYI-DSTR": {
     "slug": "KUPIANSKYI-DSTR",
     "title": "Куп'янський район",
-    "titleEn": "Kup'yansk District"
+    "rawTitle": "Куп'янський район",
+    "titleEn": "Kup'yansk District",
+    "isCity": False
   },
   "LOZIVSKYI-DSTR": {
     "slug": "LOZIVSKYI-DSTR",
     "title": "Лозівський район",
-    "titleEn": "Lozova District"
+    "rawTitle": "Лозівський район",
+    "titleEn": "Lozova District",
+    "isCity": False
   },
   "KHARKIVSKYI-DSTR": {
     "slug": "KHARKIVSKYI-DSTR",
     "title": "Харківський район",
-    "titleEn": "Kharkiv District"
+    "rawTitle": "Харківський район",
+    "titleEn": "Kharkiv District",
+    "isCity": False
   },
   "CHUHUIVSKYI-DSTR": {
     "slug": "CHUHUIVSKYI-DSTR",
     "title": "Чугуївський район",
-    "titleEn": "Chuhuiv District"
+    "rawTitle": "Чугуївський район",
+    "titleEn": "Chuhuiv District",
+    "isCity": False
   },
   "BAKHMUTSKYI-DSTR": {
     "slug": "BAKHMUTSKYI-DSTR",
     "title": "Бахмутський район",
-    "titleEn": "Bakhmut District"
+    "rawTitle": "Бахмутський район",
+    "titleEn": "Bakhmut District",
+    "isCity": False
   },
   "VOLNOVASKYI-DSTR": {
     "slug": "VOLNOVASKYI-DSTR",
     "title": "Волноваський район",
-    "titleEn": "Volnovaskiy District"
+    "rawTitle": "Волноваський район",
+    "titleEn": "Volnovaskiy District",
+    "isCity": False
   },
   "HORLIVSKYI-DSTR": {
     "slug": "HORLIVSKYI-DSTR",
     "title": "Горлівський район",
-    "titleEn": "Horlivka District"
+    "rawTitle": "Горлівський район",
+    "titleEn": "Horlivka District",
+    "isCity": False
   },
   "DONETSKYI-DSTR": {
     "slug": "DONETSKYI-DSTR",
     "title": "Донецький район",
-    "titleEn": "Donetsk District"
+    "rawTitle": "Донецький район",
+    "titleEn": "Donetsk District",
+    "isCity": False
   },
   "KALMIUSKYI-DSTR": {
     "slug": "KALMIUSKYI-DSTR",
     "title": "Кальміуський район",
-    "titleEn": "Kalmiuske District"
+    "rawTitle": "Кальміуський район",
+    "titleEn": "Kalmiuske District",
+    "isCity": False
   },
   "KRAMATORSKYI-DSTR": {
     "slug": "KRAMATORSKYI-DSTR",
     "title": "Краматорський район",
-    "titleEn": "Kramatorsk District"
+    "rawTitle": "Краматорський район",
+    "titleEn": "Kramatorsk District",
+    "isCity": False
   },
   "MARIUPOLSKYI-DSTR": {
     "slug": "MARIUPOLSKYI-DSTR",
     "title": "Маріупольський район",
-    "titleEn": "Mariupol District"
+    "rawTitle": "Маріупольський район",
+    "titleEn": "Mariupol District",
+    "isCity": False
   },
   "POKROVSKYI-DSTR": {
     "slug": "POKROVSKYI-DSTR",
     "title": "Покровський район",
-    "titleEn": "Pokrovsk District"
+    "rawTitle": "Покровський район",
+    "titleEn": "Pokrovsk District",
+    "isCity": False
   },
   "ALCHEVSKYI-DSTR": {
     "slug": "ALCHEVSKYI-DSTR",
     "title": "Алчевський район",
-    "titleEn": "Alchevskiy District"
+    "rawTitle": "Алчевський район",
+    "titleEn": "Alchevskiy District",
+    "isCity": False
   },
   "DOVZHANSKYI-DSTR": {
     "slug": "DOVZHANSKYI-DSTR",
     "title": "Довжанський район",
-    "titleEn": "Dovzhanskiy District"
+    "rawTitle": "Довжанський район",
+    "titleEn": "Dovzhanskiy District",
+    "isCity": False
   },
   "LUHANSKYI-DSTR": {
     "slug": "LUHANSKYI-DSTR",
     "title": "Луганський район",
-    "titleEn": "Luganskiy District"
+    "rawTitle": "Луганський район",
+    "titleEn": "Luganskiy District",
+    "isCity": False
   },
   "SVATIVSKYI-DSTR": {
     "slug": "SVATIVSKYI-DSTR",
     "title": "Сватівський район",
-    "titleEn": "Svativskiy District"
+    "rawTitle": "Сватівський район",
+    "titleEn": "Svativskiy District",
+    "isCity": False
   },
   "SIEVIERODONETSKYI-DSTR": {
     "slug": "SIEVIERODONETSKYI-DSTR",
     "title": "Сіверськодонецький район",
-    "titleEn": "Siverskodoneckiy District"
+    "rawTitle": "Сіверськодонецький район",
+    "titleEn": "Siverskodoneckiy District",
+    "isCity": False
   },
   "STAROBILSKYI-DSTR": {
     "slug": "STAROBILSKYI-DSTR",
     "title": "Старобільський район",
-    "titleEn": "Starobilsk District"
+    "rawTitle": "Старобільський район",
+    "titleEn": "Starobilsk District",
+    "isCity": False
   },
   "SHCHASTYNSKYI-DSTR": {
     "slug": "SHCHASTYNSKYI-DSTR",
     "title": "Щастинський район",
-    "titleEn": "Shchastinskiy District"
+    "rawTitle": "Щастинський район",
+    "titleEn": "Shchastinskiy District",
+    "isCity": False
   },
   "ROVENKIVSKYI-DSTR": {
     "slug": "ROVENKIVSKYI-DSTR",
     "title": "Ровеньківський район",
-    "titleEn": "Rovenkivskiy District"
+    "rawTitle": "Ровеньківський район",
+    "titleEn": "Rovenkivskiy District",
+    "isCity": False
   },
   "BOLHRADSKYI-DSTR": {
     "slug": "BOLHRADSKYI-DSTR",
     "title": "Болградський район",
-    "titleEn": "Bolgrad District"
+    "rawTitle": "Болградський район",
+    "titleEn": "Bolgrad District",
+    "isCity": False
   },
   "BILOHIRSKYI-DSTR": {
     "slug": "BILOHIRSKYI-DSTR",
     "title": "Білогірський район",
-    "titleEn": "Bilogirskiy District"
+    "rawTitle": "Білогірський район",
+    "titleEn": "Bilogirskiy District",
+    "isCity": False
   },
   "KERCHENSKYI-DSTR": {
     "slug": "KERCHENSKYI-DSTR",
     "title": "Керченський район",
-    "titleEn": "Kerchenskiy District"
+    "rawTitle": "Керченський район",
+    "titleEn": "Kerchenskiy District",
+    "isCity": False
   },
   "KIYEW": {
     "slug": "KIYEW",
     "title": "Київ",
-    "titleEn": "Kyiv"
+    "rawTitle": "Київ",
+    "titleEn": "Kyiv",
+    "isCity": False
   },
   "KHARKIV-CITY": {
     "slug": "KHARKIV-CITY",
-    "title": "Харків",
-    "titleEn": "Kharkiv"
+    "title": "м. Харків (місто)",
+    "rawTitle": "Харків",
+    "titleEn": "Kharkiv",
+    "isCity": True
   },
   "MARHANETS-CITY": {
     "slug": "MARHANETS-CITY",
-    "title": "Марганець",
-    "titleEn": "Marganec"
+    "title": "м. Марганець (місто)",
+    "rawTitle": "Марганець",
+    "titleEn": "Marganec",
+    "isCity": True
   },
   "NIKOPOL-CITY": {
     "slug": "NIKOPOL-CITY",
-    "title": "Нікополь",
-    "titleEn": "Nikopol"
+    "title": "м. Нікополь (місто)",
+    "rawTitle": "Нікополь",
+    "titleEn": "Nikopol",
+    "isCity": True
   },
   "ZAPORIZHZHIA-CITY": {
     "slug": "ZAPORIZHZHIA-CITY",
-    "title": "Запоріжжя",
-    "titleEn": "Zaporizhzhia"
+    "title": "м. Запоріжжя (місто)",
+    "rawTitle": "Запоріжжя",
+    "titleEn": "Zaporizhzhia",
+    "isCity": True
   },
   "SEVASTOPOL-CITY": {
     "slug": "SEVASTOPOL-CITY",
-    "title": "Севастополь",
-    "titleEn": "Sevastopol"
+    "title": "м. Севастополь (місто)",
+    "rawTitle": "Севастополь",
+    "titleEn": "Sevastopol",
+    "isCity": True
   },
   "POKROV-CITY": {
     "slug": "POKROV-CITY",
-    "title": "Покров",
-    "titleEn": "Pokrov"
+    "title": "м. Покров (місто)",
+    "rawTitle": "Покров",
+    "titleEn": "Pokrov",
+    "isCity": True
   },
   "SLAVUTICH-CITY": {
     "slug": "SLAVUTICH-CITY",
-    "title": "Славутич",
-    "titleEn": "Slavutych"
+    "title": "м. Славутич (місто)",
+    "rawTitle": "Славутич",
+    "titleEn": "Slavutych",
+    "isCity": True
   }
+}
+
+DISTRICT_TO_CITIES = {
+  "ODESKYI-DSTR": [
+    "Єгорівка",
+    "Барабой",
+    "Болгарка",
+    "Білярі",
+    "Біляївка",
+    "Великий",
+    "Великий Дальник",
+    "Великодолинське",
+    "Вигода",
+    "Грибівка",
+    "Дальник",
+    "Дачне",
+    "Доброслав",
+    "Лиманка",
+    "Маяки",
+    "Молодіжне",
+    "Овідіополь",
+    "Одеса",
+    "Олександрівка",
+    "Південне",
+    "Південне (Южне)",
+    "Роксолани",
+    "Санжійка",
+    "Усатове",
+    "Фонтанка",
+    "Чабанка",
+    "Чорноморськ",
+    "Чорноморське"
+  ],
+  "SUMSKYI-DSTR": [
+    "Іскрисківщина",
+    "Атинське",
+    "Басівка",
+    "Будки",
+    "Білопілля",
+    "Велика",
+    "Велика Чернеччина",
+    "Верхня",
+    "Верхня Сироватка",
+    "Волфине",
+    "Ворожба",
+    "Катеринівка",
+    "Краснопілля",
+    "Кіндратівка",
+    "Лебедин",
+    "Мезенівка",
+    "Миколаївка",
+    "Миропілля",
+    "Могриця",
+    "Ободи",
+    "Павлівка",
+    "Рижівка",
+    "Річки",
+    "Степанівка",
+    "Стецьківка",
+    "Суми",
+    "Токарі",
+    "Угроїди",
+    "Хотінь",
+    "Юнаківка"
+  ],
+  "DROGOBICKYI-DSTR": [
+    "Дрогобич"
+  ],
+  "SAMBIRSKYI-DSTR": [
+    "Самбір"
+  ],
+  "ZOLOCHIVSKYI-DSTR": [
+    "Буськ",
+    "Золочів"
+  ],
+  "STRIJSKYI-DSTR": [
+    "Стрий",
+    "Ходорів"
+  ],
+  "LVIVSKYI-DSTR": [
+    "Бібрка",
+    "Городок",
+    "Львів"
+  ],
+  "CHERVONOGRADSKYI-DSTR": [],
+  "YAVORIVSKYI-DSTR": [
+    "Яворів"
+  ],
+  "VOLODIMIR-VOLINSKYI-DSTR": [],
+  "KAMIN-KASHIRSKYI-DSTR": [
+    "Камінь-Каширський",
+    "Любешів",
+    "Маневичі"
+  ],
+  "KOVELSKYI-DSTR": [
+    "Голоби",
+    "Ковель",
+    "Любомль",
+    "Ратне",
+    "Стара",
+    "Стара Вижівка",
+    "Турійськ",
+    "Шацьк"
+  ],
+  "LUCKYI-DSTR": [
+    "Горохів",
+    "Ківерці",
+    "Луцьк",
+    "Рожище"
+  ],
+  "KREMENECKYI-DSTR": [
+    "Кременець",
+    "Ланівці",
+    "Шумськ"
+  ],
+  "TERNOPILSKYI-DSTR": [
+    "Бережани",
+    "Збараж",
+    "Зборів",
+    "Козова",
+    "Підволочиськ",
+    "Підгайці",
+    "Теребовля",
+    "Тернопіль"
+  ],
+  "CHORTKIVSKYI-DSTR": [
+    "Борщів",
+    "Бучач",
+    "Гусятин",
+    "Заліщики",
+    "Монастириська",
+    "Чортків"
+  ],
+  "VARASKYI-DSTR": [
+    "Вараш"
+  ],
+  "DUBENSKYI-DSTR": [
+    "Дубно"
+  ],
+  "RIVNENSKYI-DSTR": [
+    "Березне",
+    "Здолбунів",
+    "Корець",
+    "Костопіль",
+    "Острог",
+    "Рівне"
+  ],
+  "SARNENSKYI-DSTR": [
+    "Дубровиця",
+    "Рокитне",
+    "Сарни"
+  ],
+  "BEREHIVSKYI-DSTR": [
+    "Берегове",
+    "Виноградів"
+  ],
+  "MUKACHIVSKYI-DSTR": [
+    "Воловець",
+    "Мукачево",
+    "Свалява"
+  ],
+  "RAKHIVSKYI-DSTR": [
+    "Рахів"
+  ],
+  "TIACHIVSKYI-DSTR": [
+    "Тячів"
+  ],
+  "UZHHORODSKYI-DSTR": [
+    "Великий",
+    "Великий Березний",
+    "Перечин",
+    "Ужгород"
+  ],
+  "KHUSTSKYI-DSTR": [
+    "Іршава",
+    "Міжгір'Я",
+    "Хуст"
+  ],
+  "VERKHOVYNSKYI-DSTR": [
+    "Верховина"
+  ],
+  "IVANO-FRANKIVSKYI-DSTR": [
+    "Івано-Франківськ",
+    "Богородчани",
+    "Бурштин",
+    "Галич",
+    "Рогатин",
+    "Тлумач"
+  ],
+  "KALUSKYI-DSTR": [
+    "Долина",
+    "Калуш",
+    "Рожнятів"
+  ],
+  "KOLOMYISKYI-DSTR": [
+    "Городенка",
+    "Коломия",
+    "Снятин"
+  ],
+  "KOSIVSKYI-DSTR": [
+    "Косів"
+  ],
+  "NADVIRNIANSKYI-DSTR": [
+    "Надвірна",
+    "Яремче"
+  ],
+  "KAMIANETS-PODILSKYI-DSTR": [
+    "Кам'Янець-Подільський"
+  ],
+  "KHMELNYTSKYI-DSTR": [
+    "Адампіль",
+    "Волочиськ",
+    "Красилів",
+    "Старокостянтинів",
+    "Теофіполь",
+    "Хмельницький"
+  ],
+  "SHEPETIVSKYI-DSTR": [
+    "Нетішин",
+    "Полонне",
+    "Славута",
+    "Шепетівка"
+  ],
+  "VYZHNYTSKYI-DSTR": [
+    "Вижниця",
+    "Мігове",
+    "Путила"
+  ],
+  "DNISTROVSKYI-DSTR": [
+    "Кельменці",
+    "Сокиряни",
+    "Хотин"
+  ],
+  "CHERNIVETSKYI-DSTR": [
+    "Герца",
+    "Чернівці"
+  ],
+  "BERDYCHIVSKYI-DSTR": [
+    "Андрушівка",
+    "Бердичів",
+    "Ружин"
+  ],
+  "ZHYTOMYRSKYI-DSTR": [
+    "Брусилів",
+    "Житомир",
+    "Коростишів",
+    "Любар",
+    "Озерне",
+    "Попільня",
+    "Пулини",
+    "Радомишль",
+    "Романів",
+    "Хорошів",
+    "Черняхів",
+    "Чуднів"
+  ],
+  "KOROSTENSKYI-DSTR": [
+    "Іршанськ",
+    "Коростень",
+    "Лугини",
+    "Малин",
+    "Народичі",
+    "Овруч",
+    "Олевськ"
+  ],
+  "NOVOHRAD-VOLYNSKYI-DSTR": [],
+  "BILOTSERKIVSKYI-DSTR": [
+    "Біла",
+    "Біла Церква",
+    "Володарка",
+    "Рокитне",
+    "Сквира",
+    "Ставище",
+    "Тараща",
+    "Тетіїв",
+    "Узин"
+  ],
+  "BORYSPILSKYI-DSTR": [
+    "Бориспіль",
+    "Переяслав",
+    "Яготин"
+  ],
+  "BROVARSKYI-DSTR": [
+    "Баришівка",
+    "Бровари",
+    "Велика",
+    "Велика Димерка",
+    "Зазим'Я",
+    "Згурівка",
+    "Семиполки"
+  ],
+  "BUCHANSKYI-DSTR": [
+    "Ірпінь",
+    "Бородянка",
+    "Буча",
+    "Білогородка",
+    "Вишневе",
+    "Ворзель",
+    "Гаврилівка",
+    "Гостомель",
+    "Макарів",
+    "Наливайківка"
+  ],
+  "VYSHHORODSKYI-DSTR": [
+    "Іванків",
+    "Вишгород",
+    "Димер",
+    "Поліське"
+  ],
+  "OBUKHIVSKYI-DSTR": [
+    "Богуслав",
+    "Васильків",
+    "Кагарлик",
+    "Миронівка",
+    "Обухів",
+    "Ржищів",
+    "Українка",
+    "Хотів"
+  ],
+  "FASTIVSKYI-DSTR": [
+    "Боярка",
+    "Гатне",
+    "Калинівка",
+    "Фастів",
+    "Чабани"
+  ],
+  "KORIUKIVSKYI-DSTR": [
+    "Корюківка",
+    "Мена",
+    "Сновськ",
+    "Сосниця",
+    "Холми"
+  ],
+  "NIZHYNSKYI-DSTR": [
+    "Батурин",
+    "Бахмач",
+    "Бобровиця",
+    "Борзна",
+    "Борозна",
+    "Носівка",
+    "Ніжин"
+  ],
+  "NOVHOROD-SIVERSKYI-DSTR": [
+    "Короп",
+    "Новгород-Сіверський",
+    "Семенівка"
+  ],
+  "PRYLUTSKYI-DSTR": [
+    "Ічня",
+    "Варва",
+    "Прилуки",
+    "Срібне",
+    "Талалаївка"
+  ],
+  "CHERNIHIVSKYI-DSTR": [
+    "Гончарівське",
+    "Городня",
+    "Десна",
+    "Козелець",
+    "Куликівка",
+    "Любеч",
+    "Остер",
+    "Ріпки",
+    "Славутич",
+    "Чернігів"
+  ],
+  "KONOTOPSKYI-DSTR": [
+    "Буринь",
+    "Конотоп",
+    "Кролевець",
+    "Нова",
+    "Нова Слобода",
+    "Путивль"
+  ],
+  "OKHTYRSKYI-DSTR": [
+    "Велика",
+    "Велика Писарівка",
+    "Охтирка",
+    "Тростянець"
+  ],
+  "ROMENSKYI-DSTR": [
+    "Липова",
+    "Липова Долина",
+    "Недригайлів",
+    "Ромни",
+    "Терни"
+  ],
+  "SHOSTKYNSKYI-DSTR": [
+    "Вороніж",
+    "Глухів",
+    "Есмань",
+    "Зноб-Новгородське",
+    "Свеса",
+    "Середина-Буда",
+    "Шалигине",
+    "Шостка",
+    "Ямпіль"
+  ],
+  "VINNYTSKYI-DSTR": [
+    "Іллінці",
+    "Вінниця",
+    "Гнівань",
+    "Липовець",
+    "Літин",
+    "Немирів",
+    "Оратів",
+    "Погребище",
+    "Тиврів"
+  ],
+  "HAISYNSKYI-DSTR": [
+    "Бершадь",
+    "Гайсин",
+    "Ладижин",
+    "Теплик",
+    "Тростянець",
+    "Чечельник"
+  ],
+  "ZHMERYNSKYI-DSTR": [
+    "Бар",
+    "Жмеринка",
+    "Шаргород"
+  ],
+  "MOHYLIV-PODILSKYI-DSTR": [
+    "Могилів-Подільський",
+    "Муровані",
+    "Муровані Курилівці",
+    "Чернівці",
+    "Ямпіль"
+  ],
+  "TULCHYNSKYI-DSTR": [
+    "Крижопіль",
+    "Піщанка",
+    "Томашпіль",
+    "Тульчин"
+  ],
+  "KHMILNYTSKYI-DSTR": [
+    "Калинівка",
+    "Козятин",
+    "Хмільник"
+  ],
+  "ZVENYHORODSKYI-DSTR": [
+    "Багачеве",
+    "Звенигородка"
+  ],
+  "ZOLOTONISKYI-DSTR": [
+    "Золотоноша"
+  ],
+  "UMANSKYI-DSTR": [
+    "Жашків",
+    "Умань"
+  ],
+  "CHERKASKYI-DSTR": [
+    "Канів",
+    "Корсунь-Шевченківський",
+    "Сміла",
+    "Черкаси",
+    "Чигирин"
+  ],
+  "KREMENCHUTSKYI-DSTR": [
+    "Глобине",
+    "Горішні",
+    "Горішні Плавні",
+    "Градизьк",
+    "Кременчук"
+  ],
+  "LUBENSKYI-DSTR": [
+    "Гребінка",
+    "Лубни",
+    "Оржиця",
+    "Пирятин",
+    "Хорол"
+  ],
+  "MYRHORODSKYI-DSTR": [
+    "Гадяч",
+    "Заводське",
+    "Комишня",
+    "Лохвиця",
+    "Миргород",
+    "Ромодан"
+  ],
+  "POLTAVSKYI-DSTR": [
+    "Зіньків",
+    "Карлівка",
+    "Кобеляки",
+    "Котельва",
+    "Машівка",
+    "Нові",
+    "Нові Санжари",
+    "Полтава",
+    "Решетилівка",
+    "Скороходове",
+    "Чутове"
+  ],
+  "HOLOVANIVSKYI-DSTR": [
+    "Благовіщенське",
+    "Вільшанка",
+    "Гайворон",
+    "Голованівськ",
+    "Новоархангельськ"
+  ],
+  "KROPYVNYTSKYI-DSTR": [
+    "Бобринець",
+    "Долинська",
+    "Знам'Янка",
+    "Компаніївка",
+    "Кропивницький",
+    "Новгородка",
+    "Олександрівка",
+    "Устинівка"
+  ],
+  "NOVOUKRAINSKYI-DSTR": [
+    "Добровеличківка",
+    "Мала",
+    "Мала Виска",
+    "Новомиргород",
+    "Новоукраїнка"
+  ],
+  "OLEKSANDRIISKYI-DSTR": [
+    "Олександрія",
+    "Онуфріївка",
+    "Петрове",
+    "Світловодськ"
+  ],
+  "DNIPROVSKYI-DSTR": [
+    "Дніпро",
+    "Петриківка",
+    "Солоне",
+    "Царичанка"
+  ],
+  "KAMIANSKYI-DSTR": [
+    "Божедарівка",
+    "Верхньодніпровськ",
+    "Верхівцеве",
+    "Вільногірськ",
+    "Жовті",
+    "Жовті Води",
+    "Кам'Янське",
+    "Кринички",
+    "П'Ятихатки"
+  ],
+  "KRYVORIZKYI-DSTR": [
+    "Апостолове",
+    "Велика",
+    "Велика Долина",
+    "Зеленодольськ",
+    "Кривий",
+    "Кривий Ріг",
+    "Мар'Янське",
+    "Софіївка",
+    "Широке"
+  ],
+  "NIKOPOLSKYI-DSTR": [
+    "Марганець",
+    "Новопавлівка",
+    "Нікополь",
+    "Покров",
+    "Томаківка",
+    "Червоногригорівка"
+  ],
+  "NOVOMOSKOVSKYI-DSTR": [],
+  "PAVLOHRADSKYI-DSTR": [
+    "Павлоград",
+    "Юріївка"
+  ],
+  "SYNELNYKIVSKYI-DSTR": [
+    "Васильківка",
+    "Межова",
+    "Петропавлівка",
+    "Покровське",
+    "Просяна",
+    "Синельникове",
+    "Чаплине",
+    "Шахтарське"
+  ],
+  "BEREZIVSKYI-DSTR": [
+    "Березівка"
+  ],
+  "BILHOROD-DNISTROVSKYI-DSTR": [
+    "Білгород-Дністровський",
+    "Затока",
+    "Кароліно-Бугаз",
+    "Сарата",
+    "Сергіївка",
+    "Татарбунари",
+    "Тузли",
+    "Шабо"
+  ],
+  "IZMAILSKYI-DSTR": [
+    "Ізмаїл",
+    "Вилкове",
+    "Кілія"
+  ],
+  "PODILSKYI-DSTR": [
+    "Любашівка",
+    "Подільськ"
+  ],
+  "ROZDILNIANSKYI-DSTR": [
+    "Лиманське",
+    "Роздільна"
+  ],
+  "BASHTANSKYI-DSTR": [
+    "Баштанка",
+    "Березнегувате",
+    "Новий",
+    "Новий Буг",
+    "Снігурівка"
+  ],
+  "VOZNESENSKYI-DSTR": [
+    "Єланець",
+    "Вознесенськ",
+    "Південноукраїнськ",
+    "Південноукраїнськ (Южноукраїнськ)"
+  ],
+  "MYKOLAIVSKYI-DSTR": [
+    "Березанка",
+    "Дмитрівка",
+    "Дніпровське",
+    "Коблеве",
+    "Куцуруб",
+    "Миколаїв",
+    "Очаків",
+    "Рибаківка",
+    "Солончаки"
+  ],
+  "PERVOMAISKYI-DSTR": [
+    "Арбузинка",
+    "Криве",
+    "Криве Озеро",
+    "Первомайськ"
+  ],
+  "BERYSLAVSKYI-DSTR": [
+    "Архангельське",
+    "Берислав",
+    "Велика",
+    "Велика Олександрівка",
+    "Нововоронцовка",
+    "Осокорівка",
+    "Суханове",
+    "Урожайне"
+  ],
+  "HENICHESKYI-DSTR": [
+    "Генічеськ"
+  ],
+  "KAKHOVSKYI-DSTR": [
+    "Каховка",
+    "Нова",
+    "Нова Каховка",
+    "Таврійськ",
+    "Чаплинка"
+  ],
+  "SKADOVSKYI-DSTR": [
+    "Скадовськ"
+  ],
+  "KHERSONSKYI-DSTR": [
+    "Антонівка",
+    "Білозерка",
+    "Зеленівка",
+    "Музиківка",
+    "Олександрівка",
+    "Олешки",
+    "Херсон",
+    "Чорнобаївка"
+  ],
+  "BERDIANSKYI-DSTR": [
+    "Бердянськ",
+    "Приморськ",
+    "Чернігівка"
+  ],
+  "VASYLIVSKYI-DSTR": [
+    "Велика",
+    "Велика Білозерка",
+    "Енергодар",
+    "Кам'Янка-Дніпровська",
+    "Михайлівка",
+    "Приморське",
+    "Степногірськ"
+  ],
+  "ZAPORIZKYI-DSTR": [
+    "Балабине",
+    "Біленьке",
+    "Вільнянськ",
+    "Запоріжжя",
+    "Комишуваха",
+    "Кушугум",
+    "Малокатеринівка",
+    "Новомиколаївка",
+    "Новомихайлівка",
+    "Новоолександрівка",
+    "Розумівка",
+    "Річне",
+    "Таврійське",
+    "Тернувате"
+  ],
+  "MELITOPOLSKYI-DSTR": [
+    "Веселе",
+    "Мелітополь",
+    "Приазовське",
+    "Якимівка"
+  ],
+  "POLOHIVSKYI-DSTR": [
+    "Більмак",
+    "Гуляйполе",
+    "Кам'Янка",
+    "Оріхів",
+    "Пологи",
+    "Розівка",
+    "Токмак"
+  ],
+  "BAKHCHYSARAISKYI-DSTR": [
+    "Бахчисарай"
+  ],
+  "YEVPATORIISKYI-DSTR": [
+    "Євпаторія"
+  ],
+  "KURMANSKYI-DSTR": [
+    "Курман"
+  ],
+  "PEREKOPSKYI-DSTR": [
+    "Яни",
+    "Яни Капу"
+  ],
+  "SIMFEROPOLSKYI-DSTR": [
+    "Сімферополь",
+    "Українка"
+  ],
+  "FEODOSIISKYI-DSTR": [
+    "Феодосія"
+  ],
+  "DZHANKOISKYI-DSTR": [
+    "Джанкой"
+  ],
+  "YALTYNSKYI-DSTR": [
+    "Ялта"
+  ],
+  "BOHODUKHIVSKYI-DSTR": [
+    "Богодухів",
+    "Валки",
+    "Золочів"
+  ],
+  "IZIUMSKYI-DSTR": [
+    "Ізюм",
+    "Балаклія",
+    "Барвінкове",
+    "Борова"
+  ],
+  "KRASNOHRADSKYI-DSTR": [],
+  "KUPIANSKYI-DSTR": [
+    "Великий",
+    "Великий Бурлук",
+    "Колодязне",
+    "Куп'Янськ",
+    "Приколотне"
+  ],
+  "LOZIVSKYI-DSTR": [
+    "Близнюки",
+    "Златопіль",
+    "Лозова"
+  ],
+  "KHARKIVSKYI-DSTR": [
+    "Вільшани",
+    "Дергачі",
+    "Козача",
+    "Козача Лопань",
+    "Липці",
+    "Люботин",
+    "Мерефа",
+    "Нова",
+    "Нова Водолага",
+    "Прудянка",
+    "Пісочин",
+    "Слатине",
+    "Солоницівка",
+    "Харків",
+    "Циркуни"
+  ],
+  "CHUHUIVSKYI-DSTR": [
+    "Білий",
+    "Білий Колодязь",
+    "Вовчанськ",
+    "Есхар",
+    "Зміїв",
+    "Коробочкине",
+    "Печеніги",
+    "Слобожанське",
+    "Старий",
+    "Старий Салтів",
+    "Чугуїв"
+  ],
+  "BAKHMUTSKYI-DSTR": [
+    "Бахмут",
+    "Світлодарськ",
+    "Соледар",
+    "Сіверськ",
+    "Торецьк",
+    "Часів",
+    "Часів Яр"
+  ],
+  "VOLNOVASKYI-DSTR": [
+    "Велика",
+    "Велика Новосілка",
+    "Вугледар"
+  ],
+  "HORLIVSKYI-DSTR": [
+    "Єнакієве",
+    "Горлівка",
+    "Сніжне",
+    "Чистякове",
+    "Шахтарськ"
+  ],
+  "DONETSKYI-DSTR": [
+    "Донецьк",
+    "Макіївка",
+    "Харцизьк"
+  ],
+  "KALMIUSKYI-DSTR": [],
+  "KRAMATORSKYI-DSTR": [
+    "Билбасівка",
+    "Дружківка",
+    "Костянтинівка",
+    "Краматорськ",
+    "Лиман",
+    "Миколаївка",
+    "Новодонецьке",
+    "Рай-Олександрівка",
+    "Святогірськ",
+    "Слов'Янськ"
+  ],
+  "MARIUPOLSKYI-DSTR": [
+    "Кальміуське",
+    "Маріуполь"
+  ],
+  "POKROVSKYI-DSTR": [
+    "Авдіївка",
+    "Добропілля",
+    "Курахове",
+    "Мар'Їнка",
+    "Мирноград",
+    "Покровськ"
+  ],
+  "ALCHEVSKYI-DSTR": [
+    "Алчевськ",
+    "Брянка",
+    "Кадіївка"
+  ],
+  "DOVZHANSKYI-DSTR": [
+    "Довжанськ"
+  ],
+  "LUHANSKYI-DSTR": [
+    "Луганськ"
+  ],
+  "SVATIVSKYI-DSTR": [],
+  "SIEVIERODONETSKYI-DSTR": [],
+  "STAROBILSKYI-DSTR": [
+    "Старобільськ"
+  ],
+  "SHCHASTYNSKYI-DSTR": [
+    "Новоайдар"
+  ],
+  "ROVENKIVSKYI-DSTR": [
+    "Антрацит",
+    "Ровеньки",
+    "Хрустальний"
+  ],
+  "BOLHRADSKYI-DSTR": [
+    "Арциз",
+    "Болград"
+  ],
+  "BILOHIRSKYI-DSTR": [
+    "Білогірськ"
+  ],
+  "KERCHENSKYI-DSTR": [
+    "Керч"
+  ],
+  "KIYEW": [],
+  "KHARKIV-CITY": [
+    "Харків"
+  ],
+  "MARHANETS-CITY": [
+    "Марганець"
+  ],
+  "NIKOPOL-CITY": [
+    "Нікополь"
+  ],
+  "ZAPORIZHZHIA-CITY": [
+    "Запоріжжя"
+  ],
+  "SEVASTOPOL-CITY": [
+    "Севастополь"
+  ],
+  "POKROV-CITY": [
+    "Покров"
+  ],
+  "SLAVUTICH-CITY": [
+    "Славутич"
+  ]
 }
 
 CITY_POINTS_BY_SLUG = {

@@ -3,35 +3,35 @@
     "step": {
       "user": {
         "title": "eTryvoga: Select Oblast",
-        "description": "Select an oblast to monitor air alerts and tactical threats.",
+        "description": "Select an oblast (region) to monitor for air raid alarms and tactical threats.",
         "data": {
           "oblast": "Oblast / Region"
         }
       },
       "district": {
-        "title": "eTryvoga: Select District",
-        "description": "Select a district within the chosen oblast.",
+        "title": "eTryvoga: Select District or City",
+        "description": "Select a district or city of oblast significance within the chosen oblast.",
         "data": {
-          "district_slug": "District"
+          "district_slug": "District / City"
         }
       },
       "city": {
-        "title": "eTryvoga: Settlement / City",
+        "title": "eTryvoga: Settlement / Town",
         "description": "Select a specific town/settlement for pinpoint threat tracking, or monitor the entire district.",
         "data": {
-          "city_name": "Settlement / City",
+          "city_name": "Settlement / Town",
           "include_neighbors": "Include threats across the wider oblast"
         }
       }
     },
     "abort": {
-      "already_configured": "This region is already configured."
+      "already_configured": "This region has already been configured."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "eTryvoga Notification Settings",
+        "title": "eTryvoga Alert Options",
         "data": {
           "include_neighbors": "Include threats across the wider oblast"
         }
