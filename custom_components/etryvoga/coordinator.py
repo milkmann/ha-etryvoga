@@ -89,6 +89,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._sse_last_received = 0.0
         self._raw_alerts_cache: dict[str, Any] = {}
         self._raw_confirmed_cache: list[dict[str, Any]] = []
+        self._has_bootstrap_confirmed = False
 
     async def async_start_sse(self) -> None:
         """Spawn background SSE consumer task."""
@@ -140,6 +141,10 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             current_event = decoded[6:].strip().lower()
                             continue
 
+                        # Update liveness timestamp on any non-empty SSE line
+                        self._is_sse_active = True
+                        self._sse_last_received = asyncio.get_running_loop().time()
+
                         # Ignore health / ping events to avoid unnecessary entity updates
                         if current_event in ("health", "ping"):
                             continue
@@ -150,7 +155,9 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             try:
                                 payload = json.loads(payload_str)
                                 # Ignore health/ping payload dicts
-                                if "health" in payload and len(payload) == 1:
+                                if ("districtsReady" in payload and "storiesReady" in payload) or (
+                                    "health" in payload and len(payload) == 1
+                                ):
                                     continue
                                 self._is_sse_active = True
                                 self._sse_last_received = asyncio.get_running_loop().time()
@@ -189,27 +196,56 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "reconStories",
             "explosionStories",
         )
-        has_story_keys = any(k in live_data for k in categorized_keys) or "stories" in live_data
+        cat_type_map = {
+            "uavStories": THREAT_DRONE,
+            "droneStories": THREAT_DRONE,
+            "kabStories": THREAT_KAB,
+            "rocketStories": THREAT_ROCKET,
+            "shellingStories": THREAT_ARTILLERY,
+            "reconStories": THREAT_RECON,
+            "explosionStories": THREAT_EXPLOSION,
+        }
+
+        has_categorized_keys = any(k in live_data for k in categorized_keys)
+        has_story_keys = has_categorized_keys or ("stories" in live_data)
 
         new_confirmed: list[dict[str, Any]] = []
-        for key in categorized_keys:
-            stories = live_data.get(key, [])
-            if isinstance(stories, list):
-                new_confirmed.extend(stories)
+        seen_ids: set[Any] = set()
 
-        # Fallback to top-level stories if categorized lists were empty
-        if not new_confirmed and "stories" in live_data:
+        if has_categorized_keys:
+            # Modern categorized payload: extract from each category list
+            for key in categorized_keys:
+                stories = live_data.get(key, [])
+                if isinstance(stories, list):
+                    default_type = cat_type_map.get(key, "unknown")
+                    for st in stories:
+                        sid = st.get("id")
+                        if sid is not None and sid in seen_ids:
+                            continue
+                        if sid is not None:
+                            seen_ids.add(sid)
+                        if not st.get("type"):
+                            st["type"] = default_type
+                        new_confirmed.append(st)
+        elif "stories" in live_data:
+            # Fallback ONLY if categorized lists were absent from payload
             general_stories = live_data.get("stories", [])
             if isinstance(general_stories, list):
                 for st in general_stories:
                     st_type = st.get("type", "")
                     if st_type not in ("siren", "cancel"):
+                        sid = st.get("id")
+                        if sid is not None and sid in seen_ids:
+                            continue
+                        if sid is not None:
+                            seen_ids.add(sid)
                         new_confirmed.append(st)
 
         # Update confirmed cache whenever threat lists are present in payload
         # (clears cache when 0 threats, preventing stuck old threats)
         if has_story_keys:
             self._raw_confirmed_cache = new_confirmed
+            self._has_bootstrap_confirmed = True
 
         # 3. Re-aggregate state immediately with live data
         new_state = self._aggregate_state(self._raw_alerts_cache, self._raw_confirmed_cache)
@@ -234,12 +270,13 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 self._is_sse_active
                 and (asyncio.get_running_loop().time() - self._sse_last_received < 120)
             )
-            if not sse_healthy or not self._raw_confirmed_cache:
+            if not sse_healthy or not self._has_bootstrap_confirmed:
                 async with self.session.get(API_CONFIRMED_URL, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as resp:
                     if resp.status == 200:
                         confirmed_data = await resp.json()
                         if isinstance(confirmed_data, list):
                             self._raw_confirmed_cache = confirmed_data
+                            self._has_bootstrap_confirmed = True
 
             self._raw_alerts_cache = alerts_data
 
@@ -317,7 +354,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 for ending in (
                     "івського", "івському", "івська", "івське", "івський", "івських", "івської",
                     "ського", "ському", "ська", "ське", "ський", "ських", "ської",
-                    "цького", "цькому", "цька", "цьке", "цький", "цьких", "ської",
+                    "цького", "цькому", "цька", "цьке", "цький", "цьких", "цької",
                     "зького", "зькому", "зька", "зьке", "зький", "зьких", "зької",
                     "жжя", "щина", "щини", "щині", "щиною",
                 ):
@@ -327,7 +364,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if len(stem) >= 3:
                     stems.add(stem)
                 # Suffixes with -цьк- (e.g. Луцький -> луць, Вінницька -> вінниць/вінни, Чернівецька -> чернів)
-                if w.endswith(("цький", "цьке", "цька", "цькому", "цького", "цьких", "ської")):
+                if w.endswith(("цький", "цьке", "цька", "цькому", "цького", "цьких", "цької")):
                     for suf in ("кий", "ка", "ке", "кому", "кого", "ких", "кої"):
                         if w.endswith(suf):
                             s2 = w[:-len(suf)]
@@ -338,6 +375,26 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                                 if s2.endswith("ець"):
                                     stems.add(s2[:-3])
                             break
+                # Base noun inflection declensions for Ukrainian settlements
+                for n_end in (
+                    "ами", "ями", "ах", "ях", "ом", "ем", "ям", "ам", "ів", "ей",
+                    "а", "я", "е", "є", "и", "і", "о", "у", "ю"
+                ):
+                    if w.endswith(n_end) and len(w) - len(n_end) >= 3:
+                        stems.add(w[:-len(n_end)])
+                        break
+                # Ukrainian vowel alternations and root reductions (Львів -> львов, Харків -> харков, etc.)
+                if w.endswith("ів") and len(w) > 3:
+                    stems.add(w[:-2] + "ов")
+                elif w.endswith("їв") and len(w) > 3:
+                    stems.add(w[:-2] + "єв")
+                elif w.endswith("піль") and len(w) > 4:
+                    stems.add(w[:-4] + "пол")
+                    stems.add(w[:-4])
+                if w.endswith("цьк") and len(w) - 1 >= 3:
+                    stems.add(w[:-1])
+                if w.endswith("ськ") and len(w) - 2 >= 3:
+                    stems.add(w[:-2])
             return list(stems)
 
         oblast_stems = _get_stems(self.oblast)
@@ -393,36 +450,39 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Human-readable tactical summary
         tactical_summary = self._build_tactical_summary(is_siren, alert_level, relevant_threats)
 
-        # Detect state transitions for event generation
+        # Detect state transitions for event generation (collect all transitions, not just the first)
         previous_data = self.data or {}
         prev_siren = previous_data.get("is_siren", False)
         prev_threats = previous_data.get("threats", [])
-        event_trigger = None
+        events_to_trigger: list[dict[str, Any]] = []
 
         if is_siren and not prev_siren:
-            event_trigger = {
+            events_to_trigger.append({
                 "event_type": EVENT_ALARM_STARTED,
                 "payload": {"district": self.district_title, "level": alert_level, "summary": tactical_summary},
                 "ts": now.isoformat(),
-            }
+            })
         elif not is_siren and prev_siren:
-            event_trigger = {
+            events_to_trigger.append({
                 "event_type": EVENT_ALARM_CANCELLED,
                 "payload": {"district": self.district_title, "duration_minutes": duration_minutes},
                 "ts": now.isoformat(),
-            }
-        elif relevant_threats and relevant_threats != prev_threats:
-            event_trigger = {
+            })
+
+        if relevant_threats and relevant_threats != prev_threats:
+            events_to_trigger.append({
                 "event_type": EVENT_THREAT_DETECTED,
                 "payload": {"district": self.district_title, "threats": relevant_threats, "summary": tactical_summary},
                 "ts": now.isoformat(),
-            }
+            })
         elif not relevant_threats and prev_threats:
-            event_trigger = {
+            events_to_trigger.append({
                 "event_type": EVENT_THREAT_CANCELLED,
                 "payload": {"district": self.district_title, "summary": tactical_summary},
                 "ts": now.isoformat(),
-            }
+            })
+
+        event_trigger = events_to_trigger[-1] if events_to_trigger else None
 
         country_overview = self._build_country_overview(alerts_payload, confirmed_items)
 
@@ -437,6 +497,7 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "country_overview": country_overview,
             "country_overview_summary": country_overview["summary"],
             "last_event": event_trigger,
+            "last_events": events_to_trigger,
             "updated_at": now.isoformat(),
         }
 
@@ -450,30 +511,30 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Stem lookup for matching tactical threats to oblasts
         oblast_keywords: dict[str, list[str]] = {
             "Вінницька область": ["вінниц", "вінниччин"],
-            "Волинська область": ["волин", "луцьк", "ковель", "володимир"],
-            "Дніпропетровська область": ["дніпро", "крив", "нікопол", "марганець", "покров", "павлоград", "самарів", "кам'янськ"],
-            "Донецька область": ["донецьк", "краматорськ", "слов'янськ", "покровськ", "бахмут", "маріупол"],
+            "Волинська область": ["волин", "луцьк", "луць", "ковель", "володимир"],
+            "Дніпропетровська область": ["дніпро", "дніпр", "крив", "нікопол", "марганець", "покров", "павлоград", "самарів", "кам'янськ"],
+            "Донецька область": ["донецьк", "донец", "донеч", "краматорськ", "слов'янськ", "покровськ", "бахмут", "маріупол"],
             "Житомирська область": ["житомир", "коростен", "звягель", "бердичів"],
             "Закарпатська область": ["закарпат", "ужгород", "мукачев"],
-            "Запорізька область": ["запоріз", "оріхів", "гуляйпол", "полог", "василівк", "бердянськ", "мелітопол"],
-            "Івано-Франківська область": ["івано-франків", "коломий", "калуш"],
+            "Запорізька область": ["запоріз", "запоріж", "оріхів", "гуляйпол", "полог", "василівк", "бердянськ", "мелітопол"],
+            "Івано-Франківська область": ["івано-франків", "івано-франков", "коломий", "калуш"],
             "Київська область": ["київськ", "біла церква", "бровар", "бориспіл", "вишгород", "буча", "ірпінь", "фастів", "славутич"],
             "м. Київ": ["м. київ", "столиц", "(київ)", "-cds", "(kyiv)"],
             "Кіровоградська область": ["кіровоград", "кропивниц", "олександрій"],
-            "Луганська область": ["луганськ", "сіверськодонецьк", "лисичанськ"],
-            "Львівська область": ["львів", "дрогобич", "стрий", "червоноград", "шептицьк"],
-            "Миколаївська область": ["миколаїв", "вознесенськ", "очаків", "первомайськ"],
+            "Луганська область": ["луганськ", "луган", "сіверськодонецьк", "лисичанськ"],
+            "Львівська область": ["львів", "львов", "дрогобич", "стрий", "червоноград", "шептицьк"],
+            "Миколаївська область": ["миколаїв", "миколаєв", "вознесенськ", "очаків", "первомайськ"],
             "Одеська область": ["одес", "ізмаїл", "чорноморськ", "білгород"],
             "Полтавська область": ["полтав", "кременчук", "миргород", "лубни"],
-            "Рівненська область": ["рівнен", "сарни", "дубно", "вараш"],
-            "Сумська область": ["суми", "сумськ", "сумщин", "конотоп", "шостк", "охтирк", "ромен"],
-            "Тернопільська область": ["тернопіль", "кременець", "чортків"],
-            "Харківська область": ["харків", "куп'янськ", "ізюм", "чугуїв", "лозов", "богодухів"],
+            "Рівненська область": ["рівнен", "рівн", "сарни", "дубно", "вараш"],
+            "Сумська область": ["суми", "сум", "сумськ", "сумщин", "конотоп", "шостк", "охтирк", "ромен", "ромн"],
+            "Тернопільська область": ["терноп", "кременець", "чортків"],
+            "Харківська область": ["харків", "харков", "куп'янськ", "ізюм", "чугуїв", "лозов", "богодухів"],
             "Херсонська область": ["херсон", "берислав", "каховк", "скадовськ", "генічеськ"],
             "Хмельницька область": ["хмельниц", "кам'янець", "шепетівк"],
-            "Черкаська область": ["черкас", "умань", "сміла", "золотонош"],
-            "Чернівецька область": ["чернівець", "буковин"],
-            "Чернігівська область": ["чернігів", "ніжин", "прилук", "корюківк", "новгород-сіверськ"],
+            "Черкаська область": ["черкас", "умань", "уман", "сміла", "сміл", "золотонош"],
+            "Чернівецька область": ["чернів", "буковин"],
+            "Чернігівська область": ["чернігів", "чернігов", "ніжин", "прилук", "корюківк", "новгород-сіверськ"],
             "АР Крим": ["крим", "севастопол", "сімферопол", "керч", "ялт", "євпатор"],
         }
 

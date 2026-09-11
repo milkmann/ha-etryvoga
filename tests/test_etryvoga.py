@@ -1,5 +1,9 @@
 """Unit and validation tests for eTryvoga integration."""
+import os
 import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import unittest
 from unittest.mock import MagicMock
 from importlib.machinery import ModuleSpec
@@ -45,6 +49,7 @@ class EventEntityDescription:
         self.icon = icon
 class CoordinatorEntity:
     def __init__(self, coordinator): self.coordinator = coordinator
+    def async_write_ha_state(self): pass
     def __class_getitem__(cls, item): return cls
 class SensorEntity: pass
 class BinarySensorEntity: pass
@@ -377,6 +382,35 @@ class TestSSEPayloadAndCacheClearing(unittest.TestCase):
         self.coord._handle_live_payload(live_payload)
         self.assertEqual(self.coord._raw_confirmed_cache, [])
 
+    def test_cache_cleared_when_categorized_empty_even_if_stories_has_historical_drone(self):
+        # Real wartime API scenario: uavStories is empty (threat over), but general stories
+        # buffer still retains the previous drone story alongside sirens/cancels.
+        self.coord._raw_confirmed_cache = [{"id": "drone_old", "type": "drone"}]
+        live_payload = {
+            "uavStories": [],
+            "kabStories": [],
+            "rocketStories": [],
+            "shellingStories": [],
+            "reconStories": [],
+            "explosionStories": [],
+            "stories": [
+                {"id": "siren_1", "type": "siren", "title": "🔴 Район"},
+                {"id": "drone_old", "type": "drone", "title": "🛸 Старий дрон"},
+                {"id": "cancel_1", "type": "cancel", "title": "🟢 Відбій"},
+            ],
+        }
+        self.coord._handle_live_payload(live_payload)
+        # MUST be empty list, NOT reviving the old drone from stories!
+        self.assertEqual(self.coord._raw_confirmed_cache, [])
+
+    def test_categorized_missing_type_defaults_to_category_threat_type(self):
+        live_payload = {
+            "reconStories": [{"id": "recon_1", "title": "ZALA", "body": "Розвідник"}],
+        }
+        self.coord._handle_live_payload(live_payload)
+        self.assertEqual(len(self.coord._raw_confirmed_cache), 1)
+        self.assertEqual(self.coord._raw_confirmed_cache[0]["type"], THREAT_RECON)
+
     def test_filter_siren_and_cancel_from_general_stories(self):
         live_payload = {
             "stories": [
@@ -388,6 +422,123 @@ class TestSSEPayloadAndCacheClearing(unittest.TestCase):
         self.coord._handle_live_payload(live_payload)
         self.assertEqual(len(self.coord._raw_confirmed_cache), 1)
         self.assertEqual(self.coord._raw_confirmed_cache[0]["type"], "drone")
+
+    def test_rest_does_not_overwrite_confirmed_when_sse_healthy_and_cache_empty(self):
+        import asyncio
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        # Simulate SSE was active and confirmed bootstrap happened
+        self.coord._is_sse_active = True
+        self.coord._sse_last_received = loop.time()
+        self.coord._has_bootstrap_confirmed = True
+        self.coord._raw_confirmed_cache = []  # 0 threats currently active!
+
+        # Mock REST responses: alerts returns empty districts, confirmed would return stale drone
+        alerts_resp = MagicMock()
+        alerts_resp.status = 200
+        alerts_resp.json = MagicMock(return_value=asyncio.Future())
+        alerts_resp.json.return_value.set_result({"districts": []})
+
+        confirmed_resp = MagicMock()
+        confirmed_resp.status = 200
+        confirmed_resp.json = MagicMock(return_value=asyncio.Future())
+        confirmed_resp.json.return_value.set_result([{"id": "stale_drone", "type": "drone"}])
+
+        def fake_get(url, **kwargs):
+            cm = MagicMock()
+            if "alerts" in url:
+                cm.__aenter__.return_value = alerts_resp
+            else:
+                cm.__aenter__.return_value = confirmed_resp
+            return cm
+
+        self.coord.session.get = MagicMock(side_effect=fake_get)
+        self.coord.async_start_sse = MagicMock(return_value=asyncio.Future())
+        self.coord.async_start_sse.return_value.set_result(None)
+
+        loop.run_until_complete(self.coord._async_update_data())
+
+        # Verify: API_CONFIRMED_URL was NOT requested, and cache was NOT overwritten with stale drone!
+        requested_urls = [call.args[0] for call in self.coord.session.get.call_args_list]
+        from custom_components.etryvoga.const import API_CONFIRMED_URL
+        self.assertNotIn(API_CONFIRMED_URL, requested_urls)
+        self.assertEqual(self.coord._raw_confirmed_cache, [])
+        loop.close()
+
+
+class TestMultiEventDispatch(unittest.TestCase):
+    """Test dispatching multiple transitions (e.g. alarm cancelled AND threat cancelled together)."""
+
+    def test_simultaneous_alarm_cancelled_and_threat_cancelled(self):
+        coord = ETryvogaDataUpdateCoordinator(
+            hass=MagicMock(),
+            session=MagicMock(),
+            oblast="Київська область",
+            district_slug="kyiv-dstr",
+        )
+        coord.data = {
+            "is_siren": True,
+            "threats": [{"id": "1", "type": THREAT_DRONE, "title": "БПЛА"}],
+        }
+        alerts = {"districts": [{"slug": "kyiv-dstr", "status": STATUS_CANCEL}]}
+        res = coord._aggregate_state(alerts, [])
+        event_types = [e["event_type"] for e in res["last_events"]]
+        self.assertIn(EVENT_ALARM_CANCELLED, event_types)
+        self.assertIn(EVENT_THREAT_CANCELLED, event_types)
+
+        # Verify event entity handles both
+        from custom_components.etryvoga.event import ETryvogaThreatEventEntity
+        entry = MagicMock()
+        entry.unique_id = "test_entry"
+        entry.entry_id = "123"
+        entry.title = "Test"
+        event_entity = ETryvogaThreatEventEntity(coord, entry)
+        event_entity._trigger_event = MagicMock()
+        coord.data = res
+        event_entity._handle_coordinator_update()
+        triggered_types = [call.args[0] for call in event_entity._trigger_event.call_args_list]
+        self.assertIn(EVENT_ALARM_CANCELLED, triggered_types)
+        self.assertIn(EVENT_THREAT_CANCELLED, triggered_types)
+
+
+class TestStemmingUkrainianGrammar(unittest.TestCase):
+    """Test Ukrainian noun declension, vowel alternation, and grammatical forms."""
+
+    def setUp(self):
+        self.hass = MagicMock()
+        self.session = MagicMock()
+
+    def test_city_and_oblast_inflections(self):
+        cases = [
+            ("Вінниця", "vinnytsia-dstr", "У Вінниці пролунав вибух"),
+            ("Одеса", "odesa-dstr", "БПЛА на Одесу"),
+            ("Одеса", "odesa-dstr", "Удар по Одесі"),
+            ("Суми", "sumy-dstr", "Пуски КАБ у бік Сум"),
+            ("Полтава", "poltava-dstr", "Ракета в напрямку Полтави"),
+            ("Львів", "lviv-dstr", "Вибухи у Львові"),
+            ("Харків", "kharkiv-dstr", "У Харкові оголошено небезпеку"),
+            ("Чернігів", "chernihiv-dstr", "У Чернігові чути вибух"),
+            ("Тернопіль", "ternopil-dstr", "Тривога у Тернополі"),
+            ("Луцька громада", "lutsk-dstr", "У Луцьку зафіксовано дрон"),
+        ]
+        for city_name, dstr, threat_title in cases:
+            coord = ETryvogaDataUpdateCoordinator(
+                hass=self.hass,
+                session=self.session,
+                oblast="Тестова область",
+                district_slug=dstr,
+                city_name=city_name,
+                include_neighbors=False,  # Strict test: only city stems should match!
+            )
+            alerts = {"districts": []}
+            threats = [{"id": "t1", "type": "drone", "title": threat_title}]
+            res = coord._aggregate_state(alerts, threats)
+            self.assertEqual(
+                len(res["threats"]),
+                1,
+                f"Failed matching city '{city_name}' against text '{threat_title}'",
+            )
 
 
 class TestEntityConfigurations(unittest.TestCase):
@@ -411,3 +562,4 @@ class TestEntityConfigurations(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

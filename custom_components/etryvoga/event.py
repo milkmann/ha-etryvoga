@@ -64,17 +64,30 @@ class ETryvogaThreatEventEntity(CoordinatorEntity[ETryvogaDataUpdateCoordinator]
             configuration_url="https://map.etryvoga.com",
         )
         self._last_processed_event_ts: str | None = None
+        self._processed_events: set[tuple[str, str]] = set()
 
     def _handle_coordinator_update(self) -> None:
         """Handle coordinator update and fire event if a new transition occurred."""
         data = self.coordinator.data or {}
-        event_info = data.get("last_event")
+        events = data.get("last_events")
+        if events is None:
+            single = data.get("last_event")
+            events = [single] if single else []
 
-        if event_info and event_info != self._last_processed_event_ts:
+        for event_info in events:
+            if not isinstance(event_info, dict):
+                continue
             event_type = event_info.get("event_type")
-            payload = event_info.get("payload", {})
-            if event_type in self._attr_event_types:
-                self._trigger_event(event_type, payload)
-                self._last_processed_event_ts = event_info
+            ts = event_info.get("ts", "")
+            event_key = (event_type, ts)
+            if event_key not in self._processed_events:
+                payload = event_info.get("payload", {})
+                if event_type in self._attr_event_types:
+                    self._trigger_event(event_type, payload)
+                    self._processed_events.add(event_key)
+                    self._last_processed_event_ts = event_info
+
+        if len(self._processed_events) > 50:
+            self._processed_events = set(list(self._processed_events)[-25:])
 
         self.async_write_ha_state()
