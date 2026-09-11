@@ -38,13 +38,13 @@
 
 | Сутність | Назва | Device Class | Опис та додаткові атрибути |
 | :--- | :--- | :--- | :--- |
-| `binary_sensor.<id>_air_alert` | **Повітряна тривога** | `safety` | `on` коли в районі оголошено тривогу. Атрибути: `alert_level` (yellow/red), `duration_minutes`, `status_at`. |
-| `binary_sensor.<id>_kab_threat` | **Загроза КАБ** | `problem` | `on` при загрозі керованих авіабомб. Атрибути: `origins` (звідки летить), `events` (список цілей). |
-| `binary_sensor.<id>_drone_threat` | **Загроза БПЛА / Шахедів** | `problem` | `on` при фіксації ударних дронів у зоні контролю. |
-| `binary_sensor.<id>_missile_threat` | **Ракетна небезпека** | `problem` | `on` при загрозі крилатих або балістичних ракет. |
-| `binary_sensor.<id>_artillery_threat` | **Загроза артобстрілу** | `safety` | `on` для прифронтових та прикордонних громад. |
-| `binary_sensor.<id>_recon_threat` | **Розвідувальний БПЛА** | `problem` | `on` при активності розвідувальних дронів коригування. |
-| `binary_sensor.<id>_explosion_threat` | **Повідомлення про вибух** | `safety` | `on` при надходженні верифікованих повідомлень про вибухи. |
+| `binary_sensor.<id>_air_alert` | **Повітряна тривога** | `safety` | `on` (Небезпечно) коли оголошено тривогу, `off` (Безпечно). Атрибути: `alert_level` (yellow/red), `duration_minutes`. |
+| `binary_sensor.<id>_kab_threat` | **Загроза КАБ** | `safety` | `on` (Небезпечно) при загрозі керованих авіабомб. Атрибути: `origins` (звідки летить), `events`. |
+| `binary_sensor.<id>_drone_threat` | **Загроза БПЛА / Шахедів** | `safety` | `on` (Небезпечно) при фіксації ударних дронів у зоні контролю. |
+| `binary_sensor.<id>_missile_threat` | **Ракетна небезпека** | `safety` | `on` (Небезпечно) при загрозі крилатих або балістичних ракет. |
+| `binary_sensor.<id>_artillery_threat` | **Загроза артобстрілу** | `safety` | `on` (Небезпечно) для прифронтових та прикордонних громад. |
+| `binary_sensor.<id>_recon_threat` | **Розвідувальний БПЛА** | `safety` | `on` (Небезпечно) при активності розвідувальних дронів коригування. |
+| `binary_sensor.<id>_explosion_threat` | **Повідомлення про вибух** | `safety` | `on` (Небезпечно) при надходженні верифікованих повідомлень про вибухи. |
 
 ### 🟡 Сенсори стану (`sensor`)
 

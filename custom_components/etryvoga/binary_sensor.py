@@ -45,21 +45,21 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ETryvogaBinarySensorDescription, ...] = (
     ETryvogaBinarySensorDescription(
         key="kab_threat",
         translation_key="kab_threat",
-        device_class=BinarySensorDeviceClass.PROBLEM,
+        device_class=BinarySensorDeviceClass.SAFETY,
         icon="mdi:bomb",
         is_threat_key=THREAT_KAB,
     ),
     ETryvogaBinarySensorDescription(
         key="drone_threat",
         translation_key="drone_threat",
-        device_class=BinarySensorDeviceClass.PROBLEM,
+        device_class=BinarySensorDeviceClass.SAFETY,
         icon="mdi:drone",
         is_threat_key=THREAT_DRONE,
     ),
     ETryvogaBinarySensorDescription(
         key="missile_threat",
         translation_key="missile_threat",
-        device_class=BinarySensorDeviceClass.PROBLEM,
+        device_class=BinarySensorDeviceClass.SAFETY,
         icon="mdi:rocket",
         is_threat_key=THREAT_ROCKET,
     ),
@@ -73,7 +73,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ETryvogaBinarySensorDescription, ...] = (
     ETryvogaBinarySensorDescription(
         key="recon_threat",
         translation_key="recon_threat",
-        device_class=BinarySensorDeviceClass.PROBLEM,
+        device_class=BinarySensorDeviceClass.SAFETY,
         icon="mdi:eye-outline",
         is_threat_key=THREAT_RECON,
     ),
