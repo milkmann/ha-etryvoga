@@ -34,7 +34,7 @@ from .const import (
     THREAT_SHELLING,
     USER_AGENT,
 )
-from .geo_data import DISTRICTS_BY_SLUG
+from .geo_data import DISTRICTS_BY_SLUG, OBLAST_TO_DISTRICTS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +61,10 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.session = session
         self.oblast = oblast
         self.district_slug = district_slug
-        self.district_title = DISTRICTS_BY_SLUG.get(district_slug, {}).get("title", district_slug)
+        if district_slug == "_OBLAST_":
+            self.district_title = oblast
+        else:
+            self.district_title = DISTRICTS_BY_SLUG.get(district_slug, {}).get("title", district_slug)
         self.city_name = city_name
         self.include_neighbors = include_neighbors
 
@@ -179,22 +182,35 @@ class ETryvogaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         now = datetime.now(timezone.utc)
         districts = alerts_payload.get("districts", [])
 
-        # Find our district object
-        our_district = next((d for d in districts if d.get("slug") == self.district_slug), None)
-        if not our_district:
-            # Fallback by title match
-            our_district = next((d for d in districts if d.get("title") == self.district_title), {})
-
         # Status & Level
-        raw_status = our_district.get("status", STATUS_CANCEL)
-        raw_level = our_district.get("alertLevel")
-        status_at = our_district.get("statusAt")
-
-        is_siren = (raw_status == STATUS_SIREN)
-        if is_siren:
-            alert_level = LEVEL_YELLOW if raw_level == "yellow" else LEVEL_RED
+        if self.district_slug == "_OBLAST_":
+            oblast_slugs = OBLAST_TO_DISTRICTS.get(self.oblast, [])
+            oblast_districts = [d for d in districts if d.get("slug") in oblast_slugs]
+            active_districts = [d for d in oblast_districts if d.get("status") == STATUS_SIREN]
+            is_siren = len(active_districts) > 0
+            if is_siren:
+                is_all_red = any(d.get("alertLevel") == "red" for d in active_districts)
+                alert_level = LEVEL_RED if is_all_red else LEVEL_YELLOW
+                status_at = min((d.get("statusAt") for d in active_districts if d.get("statusAt")), default=None)
+            else:
+                alert_level = LEVEL_CLEAR
+                status_at = None
         else:
-            alert_level = LEVEL_CLEAR
+            # Find our district object
+            our_district = next((d for d in districts if d.get("slug") == self.district_slug), None)
+            if not our_district:
+                # Fallback by title match
+                our_district = next((d for d in districts if d.get("title") == self.district_title), {})
+
+            raw_status = our_district.get("status", STATUS_CANCEL)
+            raw_level = our_district.get("alertLevel")
+            status_at = our_district.get("statusAt")
+
+            is_siren = (raw_status == STATUS_SIREN)
+            if is_siren:
+                alert_level = LEVEL_YELLOW if raw_level == "yellow" else LEVEL_RED
+            else:
+                alert_level = LEVEL_CLEAR
 
         # Duration calculation
         duration_minutes = 0

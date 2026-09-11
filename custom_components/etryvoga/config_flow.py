@@ -62,25 +62,41 @@ class ETryvogaConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_district(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Step 2: Choose District within selected Oblast."""
+        """Step 2: Choose District or Oblast-wide (inspired by ukraine_alarm)."""
         district_slugs = OBLAST_TO_DISTRICTS.get(self.selected_oblast, [])
-        district_options = {
-            slug: DISTRICTS_BY_SLUG.get(slug, {}).get("title", slug)
-            for slug in district_slugs
+        
+        district_options: dict[str, str] = {
+            "_OBLAST_": f"{self.selected_oblast} (вся область)"
         }
+        for slug in district_slugs:
+            district_options[slug] = DISTRICTS_BY_SLUG.get(slug, {}).get("title", slug)
 
         # If oblast has only 1 district (e.g. Kyiv city)
-        if len(district_options) == 1:
-            slug = list(district_options.keys())[0]
+        if len(district_slugs) == 1:
+            slug = district_slugs[0]
             self.selected_district_slug = slug
             self.selected_district_title = district_options[slug]
             return await self.async_step_city()
 
         if user_input is not None:
-            self.selected_district_slug = user_input[CONF_DISTRICT_SLUG]
-            self.selected_district_title = district_options.get(
-                self.selected_district_slug, self.selected_district_slug
-            )
+            chosen = user_input[CONF_DISTRICT_SLUG]
+            if chosen == "_OBLAST_":
+                unique_id = f"oblast_{self.selected_oblast}"
+                await self.async_set_unique_id(unique_id)
+                self._abort_if_unique_id_configured()
+
+                return self.async_create_entry(
+                    title=f"{self.selected_oblast}",
+                    data={
+                        CONF_OBLAST: self.selected_oblast,
+                        CONF_DISTRICT_SLUG: "_OBLAST_",
+                        CONF_CITY_NAME: None,
+                        CONF_INCLUDE_NEIGHBORS: True,
+                    },
+                )
+
+            self.selected_district_slug = chosen
+            self.selected_district_title = district_options.get(chosen, chosen)
             return await self.async_step_city()
 
         schema = vol.Schema({
